@@ -64,8 +64,8 @@ export function ExploreView() {
         <p className="mt-2 text-muted-foreground">{e.intro}</p>
       </header>
 
-      <section aria-labelledby={`${id}-search`} className="max-w-2xl">
-        <label id={`${id}-search`} htmlFor={`${id}-q`} className="mb-2 block text-sm font-bold">
+      <section role="search" className="max-w-2xl">
+        <label htmlFor={`${id}-q`} className="mb-2 block text-sm font-bold">
           {e.searchLabel}
         </label>
         <div className="relative">

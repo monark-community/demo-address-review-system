@@ -24,7 +24,8 @@ const fr: Dictionary = {
   common: {
     product: "TrustRate",
     byMonark: "by Monark",
-    homeLabel: "TrustRate by Monark, accueil",
+    homeLabel: "TrustRate, par Monark : accueil",
+    demoChip: "Démo",
     skip: "Aller au contenu",
     nav: {
       overview: "Aperçu",
@@ -44,6 +45,7 @@ const fr: Dictionary = {
     footer: {
       product: "TrustRate tient un registre public, lié aux portefeuilles, de la façon dont se sont passées les collaborations, pour que votre communauté puisse faire confiance à des gens qu'elle n'a jamais rencontrés.",
       productNav: "TrustRate",
+      builtBy: "TrustRate est conçu par Monark",
       tagline: "Favoriser la collaboration au sein de la communauté Web3",
       monarkHome: "Accueil de Monark",
       projectPage: "Page du projet sur monark.io",

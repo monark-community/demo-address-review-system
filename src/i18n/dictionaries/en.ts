@@ -23,7 +23,8 @@ const en = {
   common: {
     product: "TrustRate",
     byMonark: "by Monark",
-    homeLabel: "TrustRate by Monark, home",
+    homeLabel: "TrustRate, by Monark: home",
+    demoChip: "Demo",
     skip: "Skip to content",
     nav: {
       overview: "Overview",
@@ -43,6 +44,7 @@ const en = {
     footer: {
       product: "TrustRate keeps a public, wallet-bound record of how past collaborations went, so your community can trust people it has never met.",
       productNav: "TrustRate",
+      builtBy: "TrustRate is built by Monark",
       tagline: "Fostering Collaboration within the Web3 Community",
       monarkHome: "Monark home page",
       projectPage: "Project page on monark.io",

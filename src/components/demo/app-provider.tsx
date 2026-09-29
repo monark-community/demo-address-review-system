@@ -1,7 +1,7 @@
 "use client"
 
 import { useTheme } from "next-themes"
-import { createContext, useContext, useEffect, type ReactNode } from "react"
+import { createContext, useContext, useEffect, useSyncExternalStore, type ReactNode } from "react"
 import { Toaster } from "sonner"
 
 import type { Dictionary } from "@/i18n"
@@ -27,6 +27,15 @@ export function useAppCopy(): AppCopy {
 
 export function AppProvider({ value, children }: { value: AppCopy; children: ReactNode }) {
   const { resolvedTheme } = useTheme()
+  const narrow = useSyncExternalStore(
+    (cb) => {
+      const mq = window.matchMedia("(max-width: 767px)")
+      mq.addEventListener("change", cb)
+      return () => mq.removeEventListener("change", cb)
+    },
+    () => window.matchMedia("(max-width: 767px)").matches,
+    () => false
+  )
   useEffect(() => {
     initDemo(value.locale)
   }, [value.locale])
@@ -37,13 +46,13 @@ export function AppProvider({ value, children }: { value: AppCopy; children: Rea
       <WalletPrompt />
       <Toaster
         theme={resolvedTheme === "dark" ? "dark" : "light"}
-        // Top-right, just under the sticky header and the app bar. Page titles
-        // are left-aligned and the score panel sits on the left, so the
-        // corner a toast lands in never covers the review or score it reports
-        // on. On phones sonner goes full width, just below the header.
-        position="top-right"
+        // Desktop: top-right, over the app bar's demo controls. Page titles are
+        // left-aligned and the score panel sits on the left, so a toast never
+        // covers the review, score or tally it reports on. Phones: bottom,
+        // since flows scroll the reported content to the top or centre.
+        position={narrow ? "bottom-center" : "top-right"}
         offset={{ top: 80, right: 24 }}
-        mobileOffset={{ top: 72, left: 16, right: 16 }}
+        mobileOffset={{ bottom: 16, left: 16, right: 16 }}
         toastOptions={{
           classNames: {
             toast: "!rounded-2xl !border !border-border !bg-popover !text-popover-foreground !font-sans !shadow-md",

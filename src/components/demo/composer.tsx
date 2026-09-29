@@ -136,10 +136,8 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
 
   async function seal() {
     setSubmitted(true)
-    if (!valid || rating === 0) {
-      toast.error(c.fix)
-      return
-    }
+    // Invalid: the fields and the line under the button explain what to fix.
+    if (!valid || rating === 0) return
     const inter = interactionById(demo, verified ? interaction : null)
     let newId = ""
     const ok = await tx.run(
@@ -426,10 +424,10 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
                   {comment || c.preview.empty}
                 </p>
                 {chosen ? (
-                  <p className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <WalletAvatar address={to} size={16} />
                     {t(app.review.about, { name: subject?.name ?? shortAddress(to) })}
-                  </p>
+                  </div>
                 ) : null}
               </div>
             ) : (
