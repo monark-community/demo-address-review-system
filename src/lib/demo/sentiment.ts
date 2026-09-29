@@ -13,6 +13,7 @@ const POSITIVE = [
   "easiest", "lovely", "natural", "careful", "reliable", "recommend", "professional", "amazing", "perfect",
   "on time", "on schedule", "on budget", "would hire again", "well-organised", "well organized", "smooth", "kind",
   "responsive", "delivered", "love", "happy", "impressed", "fantastic", "good", "readable", "accurate", "warm",
+  "best", "patiently", "shipped", "working", "adapted", "hire", "beautifully", "a day early", "with tests",
   // French
   "excellent", "excellente", "clair", "claire", "solide", "utile", "utiles", "magnifique", "magnifiques", "agréable",
   "patiente", "patient", "précise", "précis", "rigoureuse", "rigoureux", "rapide", "rapides", "rapidement", "avance",
@@ -20,11 +21,12 @@ const POSITIVE = [
   "naturel", "soigné", "fiable", "recommande", "professionnel", "parfait", "incroyable", "à temps", "à l'heure",
   "dans le budget", "bien organisée", "bien organisé", "fluide", "gentil", "réactif", "réactive", "livré", "bravo",
   "content", "impressionné", "bon", "bons", "bonne", "lisibles", "exacte", "simple", "mieux menée",
+  "meilleure", "meilleur", "patience", "fonctionnel", "adapté", "engagez", "un jour en avance", "avec des tests",
 ]
 
 const NEGATIVE = [
   // English
-  "late", "missed", "poor", "bad", "worst", "rude", "overpriced", "hard to reach", "unreliable", "sloppy",
+  "paid late", "weeks late", "days late", "was late", "delivered late", "too late", "missed", "poor", "bad", "worst", "rude", "overpriced", "hard to reach", "unreliable", "sloppy",
   "never", "ignored", "ghosted", "broken", "buggy", "slow", "disappointing", "disappointed", "unprofessional",
   "without warning", "had to ask", "reminders", "didn't match", "did not match", "scam", "avoid", "terrible",
   "awful", "unresponsive", "dense", "longer than planned", "ran out", "push our launch", "rushed",
