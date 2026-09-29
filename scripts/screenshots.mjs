@@ -136,11 +136,11 @@ async function appFlows(page, v) {
   await page.goto(`${BASE}/${v.locale}/app/profile/${amara}`, { waitUntil: "networkidle" })
   await page.getByRole("heading", { level: 1, name: "Amara Okafor" }).waitFor()
   await shot(page, v, "flow2-profile", true)
-  await page.getByText("How this score is calculated").click()
-  await page.getByText("How this score is calculated").scrollIntoViewIfNeeded()
+  await page.getByText("How is this calculated?").click()
+  await page.getByText("How is this calculated?").scrollIntoViewIfNeeded()
   await shot(page, v, "flow2-score-breakdown")
   await page.goto(`${BASE}/${v.locale}/app/profile/0x8e3f1c2a9b7d4e6f0a1b2c3d4e5f6a7b8c9d0e1f`, { waitUntil: "networkidle" })
-  await page.getByText("No reviews yet for this address.").waitFor()
+  await page.getByText("No reviews yet.", { exact: true }).waitFor()
   await shot(page, v, "flow2-empty-profile", true)
 
   // Flow 3: write and seal a review of Amara.
@@ -173,7 +173,7 @@ async function appFlows(page, v) {
   await page.getByRole("button", { name: "Try again" }).click()
   await prompt(page, v).getByRole("button", { name: "Confirm" }).click()
   await page.waitForURL(/sealed=/, { timeout: 15000 })
-  await page.getByText("Your review is sealed").waitFor()
+  await page.getByText("Review sealed").waitFor()
   await page.waitForTimeout(1900)
   await page.evaluate(() => window.scrollTo(0, 0))
   await shot(page, v, "flow3-sealed")

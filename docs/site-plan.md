@@ -1,6 +1,6 @@
 # TrustRate by Monark: site plan
 
-Status: shipped on `develop`. This plan describes what the site does, and it is kept in sync with the code.
+Status: shipped on `develop`. This plan describes what the site does, and it is kept in sync with the code. A simplification pass (less text, context on demand, one bar on marketing pages) is recorded in `docs/simplification.md`.
 
 - Product: **TrustRate**, Monark's reputation module: wallet-bound reviews for the people and partners a Web3 community works with.
 - Authoritative description: https://www.monark.io/en/project/address-review-system
@@ -60,10 +60,11 @@ Supporting benefits, as outcomes:
 
 - **Headline** (8 words): *Know who delivered before you hand them the work.*
   FR: *Sachez qui a livré avant de confier le travail.*
-- **Subheadline:** *TrustRate turns every bounty, gig and partnership in your community into a public review tied to a wallet, weighted towards people who really worked together.*
-  FR: *TrustRate transforme chaque prime, mission et partenariat de votre communauté en un avis public lié à un portefeuille, qui pèse d'autant plus que la collaboration était réelle.*
+- **Subheadline** (12 words): *Public reviews tied to wallets, weighted towards people who really worked together.*
+  FR: *Des avis publics liés aux portefeuilles, qui pèsent d'autant plus que la collaboration était réelle.*
+- No eyebrow (it added no information).
 - **Primary CTA:** "Launch the demo" / « Lancer la démo » → `/{locale}/app`.
-- **Secondary CTA:** "See how a review counts" / « Comprendre le calcul » → `/{locale}/how-it-works`.
+- **Secondary CTA:** "How a review counts" / « Comprendre le calcul » → `/{locale}/how-it-works`.
 - **Visual:** a **live profile card**, built in code: Amara Okafor's profile (score dial, review count, verified count, rating bars). A new review from a verified bounty slides in, goes through *Signing → Sealing in block 5,812,344 → Sealed*, then the score dial settles from 4.2 to 4.3 and "9 reviews · 7 verified" ticks up to 10 · 8 (the same numbers the demo produces when you seal that review). It loops calmly (about 8 s). Product UI over a photo, because the product's promise is exactly this moment: evidence arrives, and the reputation moves only as much as it should. The mesh butterfly sits large and cropped behind it (see §8).
 
 ## 4. Page map
@@ -72,40 +73,42 @@ All routes live under `/{locale}` (`en`, `fr`). `/` and any locale-less path red
 
 | Route | Purpose | Sections, in order |
 |-|-|-|
-| `/{locale}` | Home: explain the idea in 30 seconds and send people into the demo. | Hero with live profile card · Three outcomes · "What makes a review count" (verified interaction, reviewer standing, open moderation), each with a small piece of real UI · Who relies on it (3 photo cards: student associations, contributors, local partners) · FAQ · Closing call to action |
-| `/{locale}/app` | Demo: explore the community's reputation. | Connect gate (when disconnected) · App bar (Explore, My reputation, Moderation with open-case count, Write a review) · Search (name or address) · Community members (sortable by score or reviews) · Latest reviews feed (all / verified only) |
-| `/{locale}/app/profile/[address]` | One address's reputation. Any valid address works; unknown ones show an empty profile. | Identity (avatar, name, role, address with copy, member since) · Score panel (dial, confidence, rating bars, sentiment mix, top tags) · "How this score is calculated" (per-review weights) · Actions (write a review, or "This is you") · Tabs: Reviews received (filter, sort) · Reviews given · Activity trail |
-| `/{locale}/app/write` | Write and seal a review (`?to=` preselects the subject). | Who (address or pick a member) · The interaction you're reviewing (verified list or "no on-chain interaction") · Rating · Tags · Comment with live sentiment and mismatch warning · Live preview with the weight it will carry · Seal |
-| `/{locale}/app/moderation` | The community moderation queue. | How moderation works (one line) · Open cases (flagged review, reason, votes so far, your vote) · Resolved cases (outcome, votes, block) · Empty state |
-| `/{locale}/how-it-works` | For students, developers and careful organisers: the mechanics. Justified because Monark's audience includes students learning how the contract works, and because trust needs the formula to be public. | Intro · The life of a review (diagram) · What makes a review count (weights, formula, worked example) · When the community steps in (moderation diagram) · Replies and the activity trail · For developers (contract interface + how the demo's data layer mirrors it) · Call to action |
+| `/{locale}` | Home: explain the idea in 30 seconds and send people into the demo. 4 sections after the hero (budget: 5). | Hero with live profile card · "Why the score is hard to fake" (3 cards: tied to real work, weighted by track record, moderated in the open; each a heading, one short line and a fragment of real UI) · Who relies on it (3 photo cards) · FAQ (4 questions; the site's only FAQ) · Closing call to action (heading + button) |
+| `/{locale}/app` | Demo: explore the community's reputation. | Connect gate (when disconnected: heading, one line, button) · Search (name or address; label is screen-reader only) · Community members (sortable) · Latest reviews feed (all / verified only, 4 at a time) |
+| `/{locale}/app/profile/[address]` | One address's reputation. Any valid address works; unknown ones show an empty profile. | Identity (avatar, name, role, address with copy, member since) · Score panel (dial, reviews/verified, confidence, rating bars, sentiment mix, top tags) · "How is this calculated?" disclosure (per-review weights, formula, plain average) · Actions (write a review, or "This is you") · Tabs: Reviews received (filter, sort, 5 at a time) · Reviews given · Activity trail |
+| `/{locale}/app/write` | Write and seal a review (`?to=` preselects the subject). | Who (address or pick a member) · The interaction you're reviewing (info icon explains why it matters) · Rating · Tags (up to three) · Comment with live tone chip (info icon) and mismatch warning · One preview card with the weight it will carry ("How is this calculated?" info icon) · Seal card (permanent notice, button) |
+| `/{locale}/app/moderation` | The community moderation queue. | Title with an info icon (how moderation works) and the five moderators' avatars · Open cases (flagged review, reason, votes so far, your vote) · Decided cases (outcome, votes, block) · Empty state |
+| `/{locale}/how-it-works` | For students, developers and careful organisers: the mechanics, the formula and the contract. Everything mechanical lives here, not on the home page. | Intro line · The life of a review (diagram) · What makes a review count (weights, formula, worked example incl. the second-wallet case, confidence) · When the community steps in (moderation diagram) · Replies, votes and tone · For developers (one line; contract interface and notes behind "Show the contract interface") · Call to action |
 | `/{locale}/credits` | Photo, font and icon credits (required by the asset rules). | Photos · Type and icons · Monark brand assets |
 | `/{locale}/pricing` | **Internal strategy review only.** Never linked, excluded from the sitemap, `noindex, nofollow`. | Price card "Free, part of Monark" · What it costs to use · For partners · Reasoning |
 | 404 | Friendly not-found with the vertical Monark logo and links home and to the demo. | |
 
-**Header** (the approved standard Monark navbar, guidelines §2 and §10): butterfly mark + "TrustRate" on one line (no "by Monark"; aria-label "TrustRate, by Monark: home") → home · 28px gap · left-aligned links *Overview*, *How it works*, *Demo* (active in `foreground`) · right: Demo chip · EN/FR switch · theme toggle · primary *Launch demo*. Inside `/app` the primary action becomes the `connect-wallet` component. Below `lg`: brand + menu button; the sheet holds links, Demo chip, EN/FR, theme and the action. Inside the demo an app bar adds the network badge, the testnet notice, *Demo controls* and the section nav (Explore, My reputation, Moderation with its open-case count, Write a review).
+**Header** (the approved standard Monark navbar, guidelines §2 and §10): butterfly mark + "TrustRate" on one line (no "by Monark"; aria-label "TrustRate, by Monark: home") → home · 28px gap · left-aligned links *Overview*, *How it works*, *Demo* (active in `foreground`) · right: Demo chip · EN/FR switch · theme toggle · primary *Launch demo*. Inside `/app` the primary action becomes the `connect-wallet` component. Below `lg`: brand + menu button; the sheet holds links, Demo chip, EN/FR, theme and the action. The Demo chip is tinted `primary` at 8% in light mode and 15% in dark (AA contrast for its 12px bold text). Marketing pages have exactly one top bar: this header.
 
-**Footer** (three bands): product line + links (Overview, How it works, Demo, Credits) · "TrustRate is built by Monark", Monark logo + tagline, links to the project page on monark.io and the GitHub repo, social icons · "© {year} Monark · Open source", "Demo · simulated data", the testnet notice, photo credits link.
+**Demo app bar** (only under `/app`, one compact bar): section nav on the left (Explore, My reputation, Moderation with its open-case count) and on the right one pill that shows the simulated network ("● Sepolia testnet") and opens *Demo controls*, plus *Write a review*. No testnet strip: that line appears once per transaction, in the wallet prompt.
+
+**Footer** (three bands): product line + links (Overview, How it works, Demo, Credits) · "TrustRate is built by Monark", Monark logo + tagline, links to the project page on monark.io and the GitHub repo, social icons · "© {year} Monark · Open source", "Demo · simulated data", photo credits link.
 
 ## 5. Feature highlights
 
 | Feature | User benefit | Where it appears | Proven by flow |
 |-|-|-|-|
 | Wallet-bound profiles for any address | See anyone's track record before you work with them | Home hero; Explore; profile page | Flow 2 |
-| Sealed, uneditable reviews | Nobody can quietly rewrite history | Home outcomes; review cards (block + hash); `/how-it-works` | Flow 3 |
-| Weighted trust score with a public formula | Fake praise doesn't move the needle | Home "what counts"; profile "How this score is calculated"; composer preview | Flows 2, 3 |
+| Sealed, uneditable reviews | Nobody can quietly rewrite history | Home FAQ; review cards (block, hash in the tooltip); `/how-it-works` | Flow 3 |
+| Weighted trust score with a public formula | Fake praise doesn't move the needle | Home "why the score is hard to fake"; profile "How is this calculated?"; composer preview | Flows 2, 3 |
 | Sentiment check before sealing | Stars and words tell the same story | Composer; review cards | Flow 3 |
 | Replies and helpful votes | Both sides are heard; the most useful reviews rise | Profile (your own) | Flow 4 |
-| Open community moderation | Abuse gets hidden without anyone being able to delete evidence | Home "what counts"; moderation queue; `/how-it-works` | Flow 5 |
+| Open community moderation | Abuse gets hidden without anyone being able to delete evidence | Home "why the score is hard to fake"; moderation queue; `/how-it-works` | Flow 5 |
 
 ## 6. Key flows
 
 Every write goes through a simulated wallet prompt ("Confirm in your wallet": action summary, network, estimated network fee, the testnet notice, *Confirm* / *Reject*), then a pending state with a transaction hash (1.2 to 2.4 s; 3 to 6 s with "slow network"), then confirmed (with a block number) or failed. The demo controls can make the next transaction fail on-chain, and rejecting in the prompt always produces the "rejected" failure.
 
 1. **Connect a wallet.** Visitor opens `/app` → "Connect demo wallet" → prompt "Sign in to TrustRate" (a signed message, no fee; it also approves a voting session) → *pending* ("Waiting for signature…") → *connected*: the header shows the `connect-wallet` chip (Jazzicon + `0x5a1C…7e2B`, "Sam Rivera"). *Failed*: rejecting shows "You declined the sign-in request. Nothing was shared." with a retry.
-2. **Look someone up.** Explore → type "amara" or paste an address → results filter live → open Amara Okafor's profile: score 4.2 (plain average 4.6, pulled down by the prior and a low-weight spam review), *Solid*, rating bars, sentiment mix, top tags → open "How this score is calculated" to see each review's weight. *Error*: an invalid address shows "That isn't a wallet address. Addresses start with 0x followed by 40 letters and numbers." *Empty*: a valid address nobody has reviewed opens an empty profile: "No reviews yet for this address. If you've worked with them, you can write the first one."
+2. **Look someone up.** Explore → type "amara" or paste an address → results filter live → open Amara Okafor's profile: score 4.2 (plain average 4.6, pulled down by the prior and a low-weight spam review), *Solid*, rating bars, sentiment mix, top tags → open "How is this calculated?" to see each review's weight. *Error*: an invalid address shows "Not a wallet address (0x + 40 characters)." *Empty*: a valid address nobody has reviewed opens an empty profile: "No reviews yet." with *Write the first review*.
 3. **Write and seal a review.** From Amara's profile → *Write a review* → the subject is prefilled; pick the verified interaction "Bounty #231 · Smart contract for the ticketing club · 1,200 tUSDC" → 5 stars → tags → comment. The sentiment line reads the text live; if the words disagree with the stars ("Your words sound negative but you gave 5 stars. Is that right?") it warns without blocking. The preview shows the card as it will appear and "Counts fully: verified interaction, established reviewer" → *Seal review* → prompt → *pending* ("Sealing your review…", hash) → *confirmed*: redirect to the profile, the review appears at the top with its seal stamp and the score dial settles to the new value. *Failed*: "The network rejected the transaction. Nothing was written, and your draft is still here." with *Try again*. Validation: can't review yourself, one review per interaction, rating required, 40 to 600 characters, at most three tags.
 4. **Reply and vote helpful.** *My reputation* → Café Lumen's 3-star review of you ("Paid three weeks late…") → *Reply* → write → prompt → *pending* → *confirmed*: the reply appears under the review, marked "Reply from the reviewed address". On another review, *Helpful* → short pending on the button → count increases (session vote, no prompt). *Failed* variants as above; a failed helpful vote reverts the count with a message.
-5. **Flag and moderate.** On a spammy five-star review of Amara from a two-day-old wallet → *Flag* → reason "Spam or self-promotion" + note → prompt → *pending* → *confirmed*: "Flag recorded. Moderators have been notified." → *Moderation* (badge shows 2 open cases) → the case shows the review, the reason, the reviewer's standing and a three-slot tally per outcome → *Vote to hide* → prompt → *pending* → *confirmed*: your vote is counted; the other moderators' votes arrive one by one (Diego, then Priya) → at 3 matching votes the case resolves: "Hidden by community moderation (3 of 5 moderators)". On Amara's profile the review is collapsed with the reason and a *Show anyway* toggle, and it no longer counts in the score. *Empty*: "No open cases. The community is behaving." 
+5. **Flag and moderate.** On a spammy five-star review of Amara from a two-day-old wallet → *Flag* → reason "Spam or self-promotion" + note → prompt → *pending* → *confirmed*: toast "Flag recorded" with *Open moderation* → *Moderation* (badge shows 2 open cases) → the case shows the review, the reason, the reviewer's standing and a three-slot tally per outcome → *Vote to hide* → prompt → *pending* → *confirmed*: your vote is counted; the other moderators' votes arrive one by one (Diego, then Priya) → at 3 matching votes the case resolves: "Hidden by community moderation (3 of 5 moderators)". On Amara's profile the review is collapsed with the reason and a *Show anyway* toggle, and it no longer counts in the score. *Empty*: "No open cases. The community is behaving." 
 
 ## 7. Content (EN / FR)
 
@@ -113,54 +116,49 @@ The shipped copy lives in `src/i18n/dictionaries/en.ts` and `fr.ts` (typed; Fren
 
 ### Home
 
+Budgets (guidelines §8 "Restraint"): headline ≤ 10 words, one line ≤ 25, section = heading + at most one short line, card text ≤ 20 words.
+
 | Slot | English | Français |
 |-|-|-|
-| Eyebrow | Reputation module · Monark | Module de réputation · Monark |
 | H1 | Know who delivered before you hand them the work. | Sachez qui a livré avant de confier le travail. |
-| Sub | TrustRate turns every bounty, gig and partnership in your community into a public review tied to a wallet, weighted towards people who really worked together. | TrustRate transforme chaque prime, mission et partenariat de votre communauté en un avis public lié à un portefeuille, qui pèse d'autant plus que la collaboration était réelle. |
-| CTAs | Launch the demo · See how a review counts | Lancer la démo · Comprendre le calcul |
-| Outcomes H2 | Trust, without knowing everyone personally | La confiance, sans connaître tout le monde |
-| Outcome 1 | **Know who delivered.** A contributor's whole track record, across projects, in one place, before you hand over the bounty. | **Sachez qui a livré.** Tout le parcours d'un contributeur, d'un projet à l'autre, au même endroit, avant de confier la prime. |
-| Outcome 2 | **Fake praise doesn't move the needle.** Reviews tied to a real payment count fully; a fresh wallet praising itself barely registers. | **Les faux éloges ne pèsent rien.** Un avis lié à un vrai paiement compte pleinement ; un portefeuille tout neuf qui se félicite lui-même ne change presque rien. |
-| Outcome 3 | **Nobody can quietly rewrite history.** Reviews are sealed on-chain, and disputes are settled by moderators in the open. | **Personne ne réécrit l'histoire en douce.** Les avis sont scellés on-chain, et les litiges sont tranchés au grand jour par les modérateurs. |
-| Counts H2 | What makes a review count | Ce qui donne du poids à un avis |
-| Verified | **Tied to real work.** Link a review to the bounty, milestone or payment it's about and it carries full weight. Without one, it counts for 40%. | **Lié à un vrai travail.** Rattachez l'avis à la prime, au jalon ou au paiement concerné : il compte pleinement. Sans lien, il compte pour 40 %. |
-| Standing | **Written by someone with a record.** Reviewers with at least two verified interactions count fully; brand-new wallets count for 60%. | **Écrit par quelqu'un qui a un historique.** Les évaluateurs qui comptent au moins deux interactions vérifiées pèsent pleinement ; les portefeuilles tout neufs, pour 60 %. |
-| Moderation | **Moderated in the open.** Flagged reviews go to five community moderators. Three votes decide, and hidden reviews stay on-chain for anyone to check. | **Modéré au grand jour.** Les avis signalés passent devant cinq modérateurs de la communauté. Trois votes suffisent, et un avis masqué reste on-chain, consultable par tous. |
-| Who H2 | For everyone who works with people they've never met | Pour tous ceux qui travaillent avec des gens jamais rencontrés |
-| Student associations | Hire the designer or developer for your next bounty from their track record, not a hunch. | Choisissez le graphiste ou le développeur de votre prochaine prime sur son parcours, pas sur une impression. |
-| Contributors | Take your reputation from one project to the next. Your wallet carries the record. | Emportez votre réputation d'un projet à l'autre : c'est votre portefeuille qui la porte. |
-| Local partners | The café that hosts your meetups gets a fair record too, and can review you back. | Le café qui accueille vos rencontres a lui aussi un dossier équitable, et peut vous évaluer en retour. |
-| Closing | Look someone up in the demo. It takes ten seconds. / Launch the demo | Consultez un profil dans la démo. Dix secondes suffisent. / Lancer la démo |
+| Sub | Public reviews tied to wallets, weighted towards people who really worked together. | Des avis publics liés aux portefeuilles, qui pèsent d'autant plus que la collaboration était réelle. |
+| CTAs | Launch the demo · How a review counts | Lancer la démo · Comprendre le calcul |
+| Rules H2 | Why the score is hard to fake | Pourquoi le score est difficile à truquer |
+| Verified | **Tied to real work.** Reviews linked to a paid bounty or invoice count fully. (chips: 100% / 40%) | **Lié à un vrai travail.** Un avis rattaché à une prime ou une facture payée compte pleinement. |
+| Standing | **Weighted by track record.** A brand-new wallet can't farm reputation. (bars: established 100%, new wallet 60%) | **Pondéré par l'historique.** Un portefeuille tout neuf ne peut pas se fabriquer une réputation. |
+| Moderation | **Moderated in the open.** Five moderators decide. Hidden reviews stay on-chain. (tally: 3 of 5 voted to hide) | **Modéré au grand jour.** Cinq modérateurs tranchent. Un avis masqué reste on-chain. |
+| Who H2 | For work with people you've never met | Pour travailler avec des gens jamais rencontrés |
+| Student associations | Pick your next bounty hire on track record, not a hunch. | Choisissez votre prochaine recrue sur son parcours, pas sur une impression. |
+| Contributors | Your reputation follows your wallet from project to project. | Votre réputation suit votre portefeuille d'un projet à l'autre. |
+| Local partners | The café hosting your meetups gets a fair record too. | Le café qui accueille vos rencontres a lui aussi un dossier équitable. |
+| Closing | Look someone up. It takes ten seconds. / Launch the demo | Consultez un profil. Dix secondes suffisent. / Lancer la démo |
 
-**FAQ**
+**FAQ** (home only; the second-wallet and tone questions became content on `/how-it-works`)
 
-1. *Is this real?* No. It's a testnet demo with simulated data: no real wallet, no real network, nothing leaves your browser. / *Est-ce réel ?* Non. C'est une démo sur testnet avec des données simulées : aucun vrai portefeuille, aucun vrai réseau, rien ne quitte votre navigateur.
-2. *Can a review be edited or deleted?* No. A review is sealed on-chain (written to the blockchain for good). You can't edit it, but the reviewed person can reply, and moderators can hide it from view if it breaks the community rules. / *Peut-on modifier ou supprimer un avis ?* Non. Un avis est scellé on-chain (inscrit pour de bon sur la blockchain). On ne peut pas le modifier, mais la personne évaluée peut répondre, et les modérateurs peuvent le masquer s'il enfreint les règles de la communauté.
-3. *What stops someone from reviewing themselves from a second wallet?* Nothing stops them from posting, but it barely counts: with no real interaction and no record, the review carries 24% of the weight of a verified one, and it can be flagged. / *Qu'est-ce qui empêche quelqu'un de s'évaluer avec un second portefeuille ?* Rien ne l'empêche de publier, mais l'avis ne pèse presque rien : sans vraie interaction ni historique, il compte pour 24 % d'un avis vérifié, et il peut être signalé.
-4. *Who are the moderators?* Five members elected by the community for a term, through the Monark governance module. Three matching votes decide a case, and every vote is public. / *Qui sont les modérateurs ?* Cinq membres élus par la communauté pour un mandat, via le module de gouvernance de Monark. Trois votes concordants tranchent un dossier, et chaque vote est public.
-5. *Is my name stored on-chain?* Only your wallet address. Names in the demo are labels the community gives to known addresses; you can review and be reviewed without one. / *Mon nom est-il inscrit on-chain ?* Seule votre adresse de portefeuille l'est. Les noms de la démo sont des étiquettes que la communauté associe à des adresses connues ; on peut évaluer et être évalué sans nom.
-6. *How is the sentiment worked out?* A small word-based classifier reads the comment in English or French. It never changes the score; it only warns you when your words and your stars disagree. / *Comment le ton est-il déterminé ?* Un petit classificateur fondé sur le vocabulaire lit le commentaire, en français ou en anglais. Il ne modifie jamais le score ; il vous avertit seulement quand vos mots et vos étoiles se contredisent.
+1. *Is this real?* No. It's a testnet demo with simulated data. Nothing leaves your browser. / *Est-ce réel ?* Non. C'est une démo sur testnet avec des données simulées. Rien ne quitte votre navigateur.
+2. *Can a review be edited or deleted?* No, it's sealed on-chain. The reviewed person can reply, and moderators can hide it. / *Peut-on modifier ou supprimer un avis ?* Non, il est scellé on-chain. La personne évaluée peut répondre, et les modérateurs peuvent le masquer.
+3. *Who are the moderators?* Five members elected by the community. Three matching votes decide, in public. / *Qui sont les modérateurs ?* Cinq membres élus par la communauté. Trois votes concordants tranchent, publiquement.
+4. *Is my name stored on-chain?* No, only your wallet address. Names in the demo are community labels. / *Mon nom est-il inscrit on-chain ?* Non, seulement votre adresse. Les noms de la démo sont des étiquettes de la communauté.
 
 ### App: key strings
 
 | Slot | English | Français |
 |-|-|-|
-| Connect gate | Connect a demo wallet to look people up, write reviews and moderate. Nothing is signed for real. | Connectez un portefeuille de démo pour consulter des profils, écrire des avis et modérer. Rien n'est signé pour de vrai. |
+| Connect gate | Connect a demo wallet · To look people up, write reviews and moderate. | Connectez un portefeuille de démo · Pour consulter des profils, écrire des avis et modérer. |
 | Search | Search by name or paste an address | Chercher un nom ou coller une adresse |
-| Invalid address | That isn't a wallet address. Addresses start with 0x followed by 40 letters and numbers. | Ce n'est pas une adresse de portefeuille. Une adresse commence par 0x, suivi de 40 lettres et chiffres. |
-| No match | Nobody in this community matches "{q}". Paste their full address to open their profile. | Personne dans cette communauté ne correspond à « {q} ». Collez son adresse complète pour ouvrir son profil. |
-| Empty profile | No reviews yet for this address. If you've worked with them, you can write the first one. | Aucun avis pour cette adresse. Si vous avez travaillé avec cette personne, vous pouvez écrire le premier. |
+| Invalid address | Not a wallet address (0x + 40 characters). | Ce n'est pas une adresse (0x + 40 caractères). |
+| No match | No one matches "{q}". Try their full address. | Personne ne correspond à « {q} ». Essayez son adresse complète. |
+| Empty profile | No reviews yet. + *Write the first review* | Aucun avis pour l'instant. + *Écrire le premier avis* |
 | Score confidence | Early · Growing · Solid | Débutant · En construction · Solide |
 | Composer mismatch | Your words sound {tone} but you gave {n} stars. Is that right? | Vos mots semblent {tone}, mais vous avez donné {n} étoiles. Est-ce bien voulu ? |
 | Permanent notice | Once sealed, a review can't be edited or deleted. | Une fois scellé, un avis ne peut être ni modifié ni supprimé. |
 | Wallet prompt | Confirm in your wallet · Estimated network fee · Confirm · Reject | Confirmez dans votre portefeuille · Frais de réseau estimés · Confirmer · Refuser |
-| Disclaimer | Testnet demo · not financial advice · no real funds | Démo sur testnet · ceci n'est pas un conseil financier · aucun fonds réel |
+| Disclaimer (wallet prompt only) | Testnet demo · not financial advice · no real funds | Démo sur testnet · ceci n'est pas un conseil financier · aucun fonds réel |
 | Pending | Sealing your review… | Scellement de votre avis… |
 | Sealed | Sealed in block {block} | Scellé dans le bloc {block} |
 | Failed (reverted) | The network rejected the transaction. Nothing was written, and your draft is still here. | Le réseau a rejeté la transaction. Rien n'a été inscrit, et votre brouillon est toujours là. |
 | Rejected | You rejected the request in your wallet. Nothing was sent. | Vous avez refusé la demande dans votre portefeuille. Rien n'a été envoyé. |
-| Hidden review | Hidden by community moderation: {reason}. It stays on-chain and no longer counts in the score. | Masqué par la modération : {reason}. L'avis reste on-chain et ne compte plus dans le score. |
+| Hidden review | Hidden by community moderation: {reason}. Not counted. | Masqué par la modération : {reason}. Non compté. |
 | Moderation empty | No open cases. The community is behaving. | Aucun dossier ouvert. La communauté se tient bien. |
 | Activity empty | Nothing has happened for this address yet. | Il ne s'est encore rien passé pour cette adresse. |
 | Storage error | Your browser blocked local storage, so the demo will forget changes when you leave. | Votre navigateur bloque le stockage local : la démo oubliera vos changements à la fermeture. |
@@ -171,7 +169,7 @@ The complete list (validation messages, demo controls, tabs, toasts, how-it-work
 
 Colour, type, logo, header and footer are fixed by the guidelines: cream / espresso tokens derived from `#f88d10` with `--surface-tint: 1` (the §3 token block pasted over the registry `theme.json`), Nunito Sans 400/600/700/800, pill actions, 1rem cards, borders rather than shadows, flat orange only.
 
-- **Layout and rhythm.** Home alternates statement bands and evidence bands: hero (copy left, live profile card right on desktop; stacked on mobile) → outcomes (three columns, icons top-left) → "what makes a review count" (three cards, each containing a real fragment of UI: a verified-interaction chip, a weight bar, a moderation tally) → photo cards → FAQ (single column, 68ch) → closing band. The branded section divider appears twice. The app is a working tool: an app bar under the header, a dense two-column profile on desktop (score panel sticky on the left, reviews on the right), single column on mobile, generous touch targets.
+- **Layout and rhythm.** Home: hero (copy left, live profile card right on desktop; stacked on mobile) → "why the score is hard to fake" (three cards, each a heading, one line and a real fragment of UI: a verified-interaction chip, two weight bars, a moderation tally) → photo cards → FAQ (single column, 68ch) → closing band. The branded section divider appears once, before the closing band. The app is a working tool: one compact app bar under the header, a dense two-column profile on desktop (score panel sticky on the left, reviews on the right), single column on mobile, generous touch targets. On phones the app bar keeps the three sections and the network/controls pill; *Write a review* lives on each profile.
 - **Hero visual.** The live profile card (see §3).
 - **Mesh butterfly.** Used once, on the home hero, large and cropped off the right edge at low opacity behind the card. Not used anywhere else. No gradients anywhere except inside the logo.
 - **Illustrations.** No reused Monark decorative illustrations beyond the mesh butterfly. The site draws its own flat orange line art: the score dial (a semicircle gauge), "the life of a review" and "moderation" diagrams on `/how-it-works`, and the seal stamp (an outlined circle like the brand divider's end caps).
@@ -223,9 +221,9 @@ A designed `/{locale}/pricing` page exists **for internal review only**: not lin
 Decisions taken while working unattended:
 
 - The sign-in message also approves a **voting session**, so helpful votes don't open a wallet prompt per click (as dapps with session keys do). Every other write (review, reply, flag, moderation vote) goes through the prompt.
-- Reviews move no value, but each write pays a small (simulated) network fee, so the wallet prompt shows the testnet notice on every fee-paying action, and the composer shows it next to *Seal review*.
+- Reviews move no value, but each write pays a small (simulated) network fee, so the wallet prompt shows the testnet notice on every fee-paying action. That is the only place it appears (not in the composer, the reply form, the flag dialog, the app bar or the footer).
 - Other moderators' votes are simulated: after your vote, the remaining seeded moderators vote in sequence (about 1.5 s apart) with the majority's outcome until the case reaches three matching votes.
-- Toasts sit top-right on desktop (over the app bar's demo controls, never over the review, score or tally they report on) and at the bottom on phones. Validation errors are shown inline next to each field and under *Seal review*, never as a toast.
+- Toasts sit top-right on desktop and at the bottom on phones, and only where nothing else confirms the action (reply posted, flag recorded with *Open moderation*, helpful vote failed, demo reset). Sealing a review opens the profile with a status line instead of a toast; a moderation vote shows "You voted to …" in the card instead of a toast. Validation errors are shown inline next to each field and under *Seal review*, never as a toast.
 - The flagged-and-voted case stays in place in the queue for the rest of the visit, so the visitor watches the tally decide instead of the card jumping to "Decided".
 - The sentiment word lists are phrase-aware ("paid late", not "late", so "stayed open late" isn't negative). Spam praise reads as *positive*, which is realistic: tone is a hint, moderation is the safeguard.
 - Dependencies beyond the stack: `next-themes` (theme toggle without a flash), `sonner` (toasts), `react-jazzicon` (required by the registry `wallet`), `radix-ui` and `class-variance-authority` (registry components), `shadcn` (its Tailwind stylesheet); `playwright` as a dev dependency for `pnpm screenshots`. No recharts: the dial and bars are drawn in code.

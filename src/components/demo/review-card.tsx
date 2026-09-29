@@ -15,7 +15,7 @@ import { interactionById, toggleHelpful } from "@/lib/demo/ops"
 import { isHidden, openCaseFor } from "@/lib/demo/score"
 import { classify } from "@/lib/demo/sentiment"
 import type { DemoState, Review } from "@/lib/demo/types"
-import { formatBlock, formatDate, formatRelative, formatToken, shortHash } from "@/lib/format"
+import { formatBlock, formatDate, formatRelative, formatToken } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
 import { useAppCopy } from "./app-provider"
@@ -137,8 +137,6 @@ export function ReviewCard({
         ))}
       </div>
 
-      {interaction ? <p className="mt-2 text-xs text-muted-foreground">{interaction.title}</p> : null}
-
       <p className="mt-3 max-w-[68ch] leading-relaxed">{review.comment}</p>
 
       {hidden ? (
@@ -172,7 +170,8 @@ export function ReviewCard({
 
       <footer className="mt-4 flex flex-col gap-3 border-t pt-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1.5 font-semibold text-foreground">
+          {/* The transaction hash sits in the tooltip: one line of evidence, not three. */}
+          <span className="inline-flex items-center gap-1.5 font-semibold text-foreground" title={review.hash}>
             <SealStamp size={16} animate={fresh} />
             {t(r.sealedIn, { block: formatBlock(review.block, locale) })}
           </span>
@@ -180,10 +179,6 @@ export function ReviewCard({
           <time dateTime={review.at} title={formatDate(review.at, locale)}>
             {formatRelative(review.at, locale)}
           </time>
-          <span aria-hidden="true">·</span>
-          <span className="font-mono" title={review.hash}>
-            {shortHash(review.hash)}
-          </span>
         </p>
         <div className="flex flex-wrap items-center gap-1.5">
           {flagged ? (

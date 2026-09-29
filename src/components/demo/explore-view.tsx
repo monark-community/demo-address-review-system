@@ -28,7 +28,7 @@ export function ExploreView() {
   const [query, setQuery] = useState("")
   const [sort, setSort] = useState<"score" | "reviews">("score")
   const [feed, setFeed] = useState<"all" | "verified">("all")
-  const [limit, setLimit] = useState(6)
+  const [limit, setLimit] = useState(4)
 
   const members = useMemo(() => {
     if (!demo) return []
@@ -59,13 +59,10 @@ export function ExploreView() {
 
   return (
     <div className="flex flex-col gap-8">
-      <header className="max-w-2xl">
-        <h1 className="text-3xl font-extrabold tracking-display sm:text-4xl">{e.title}</h1>
-        <p className="mt-2 text-muted-foreground">{e.intro}</p>
-      </header>
+      <h1 className="text-3xl font-extrabold tracking-display sm:text-4xl">{e.title}</h1>
 
-      <section role="search" className="max-w-2xl">
-        <label htmlFor={`${id}-q`} className="mb-2 block text-sm font-bold">
+      <section role="search" className="-mt-2 max-w-2xl">
+        <label htmlFor={`${id}-q`} className="sr-only">
           {e.searchLabel}
         </label>
         <div className="relative">
@@ -158,7 +155,7 @@ export function ExploreView() {
               value={feed}
               onChange={(v) => {
                 setFeed(v)
-                setLimit(6)
+                setLimit(4)
               }}
               options={[
                 { value: "all", label: e.feed.all },
@@ -174,7 +171,7 @@ export function ExploreView() {
                 <ReviewCard key={r.id} state={demo} review={r} mode="feed" />
               ))}
               {reviews.length > limit ? (
-                <Button variant="outline" className="self-center" onClick={() => setLimit((l) => l + 6)}>
+                <Button variant="outline" className="self-center" onClick={() => setLimit((l) => l + 4)}>
                   {e.moreReviews}
                 </Button>
               ) : null}

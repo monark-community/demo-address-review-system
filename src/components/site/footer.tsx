@@ -12,7 +12,11 @@ const SOCIALS = [
   { key: "youtube", url: "https://www.youtube.com/@monark_io" },
 ] as const
 
-/** Standard Monark three-band footer (brand guidelines §10). */
+/**
+ * Standard Monark three-band footer (brand guidelines §10). The legal band
+ * carries "Demo · simulated data" only; the testnet line lives in the wallet
+ * prompt, once per transaction (§11).
+ */
 export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary }) {
   const c = dict.common
   const f = c.footer
@@ -110,8 +114,6 @@ export function SiteFooter({ locale, dict }: { locale: Locale; dict: Dictionary 
           </span>
           <span aria-hidden="true" className="hidden md:inline">·</span>
           <span className="font-semibold text-foreground">{c.demoBadge}</span>
-          <span aria-hidden="true" className="hidden md:inline">·</span>
-          <span>{c.disclaimer}</span>
           <span aria-hidden="true" className="hidden md:inline">·</span>
           <Link href={href(locale, "/credits")} className="underline underline-offset-4 hover:text-foreground">
             {f.photos}

@@ -10,11 +10,9 @@ import { t } from "@/i18n/t"
 import { useTx } from "@/lib/demo/chain"
 import { addReply } from "@/lib/demo/ops"
 import type { DemoState, Review } from "@/lib/demo/types"
-import { formatBlock } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
 import { useAppCopy } from "./app-provider"
-import { Disclaimer } from "./disclaimer"
 import { nameOf } from "./identity"
 import { TxFeedback } from "./tx-feedback"
 
@@ -23,7 +21,7 @@ const MAX = 400
 
 /** Public reply by the reviewed address, once per review. */
 export function ReplyForm({ state, review, onDone, className }: { state: DemoState; review: Review; onDone: () => void; className?: string }) {
-  const { app, disclaimer, locale } = useAppCopy()
+  const { app } = useAppCopy()
   const f = app.replyForm
   const id = useId()
   const [text, setText] = useState("")
@@ -43,7 +41,7 @@ export function ReplyForm({ state, review, onDone, className }: { state: DemoSta
       },
       (hash, block) => {
         addReply(review.id, text, hash, block)
-        toast.success(f.done, { description: t(app.tx.sealedIn, { block: formatBlock(block, locale) }) })
+        toast.success(f.done)
       }
     )
     if (ok) onDone()
@@ -58,12 +56,10 @@ export function ReplyForm({ state, review, onDone, className }: { state: DemoSta
       }}
       noValidate
     >
-      <div>
-        <p className="font-bold">{f.title}</p>
-        <p className="mt-1 text-xs text-muted-foreground">{f.hint}</p>
-      </div>
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor={`${id}-reply`}>{f.label}</Label>
+        <Label htmlFor={`${id}-reply`} className="font-bold">
+          {f.title}
+        </Label>
         <Textarea
           id={`${id}-reply`}
           value={text}
@@ -82,7 +78,6 @@ export function ReplyForm({ state, review, onDone, className }: { state: DemoSta
         </div>
       </div>
       <TxFeedback state={tx.state} pendingLabel={f.pending} onDismiss={tx.reset} />
-      <Disclaimer text={disclaimer} />
       <div className="flex flex-wrap justify-end gap-2">
         <Button type="button" variant="ghost" onClick={onDone} disabled={tx.busy}>
           {f.cancel}

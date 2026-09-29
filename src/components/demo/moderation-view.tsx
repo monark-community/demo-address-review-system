@@ -1,11 +1,11 @@
 "use client"
 
-import { CheckIcon, EyeIcon, EyeOffIcon, FlagIcon, Loader2Icon, ShieldCheckIcon } from "lucide-react"
+import { CheckIcon, EyeIcon, EyeOffIcon, FlagIcon, Loader2Icon } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
-import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
+import { InfoTip } from "@/components/ui/info-tip"
 import { WalletAvatar } from "@/components/ui/wallet"
 import { UnverifiedChip, VerifiedChip } from "@/components/trust/chips"
 import { Stars } from "@/components/trust/stars"
@@ -37,25 +37,19 @@ export function ModerationView() {
 
   return (
     <div className="flex flex-col gap-8">
-      <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="max-w-2xl">
+      <header className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-1">
           <h1 className="text-3xl font-extrabold tracking-display sm:text-4xl">{m.title}</h1>
-          <p className="mt-2 text-muted-foreground">{m.intro}</p>
+          <InfoTip label={app.info}>{m.info}</InfoTip>
         </div>
-        <div className="flex flex-col gap-2 lg:items-end">
-          <ul className="flex -space-x-2" aria-label={m.title}>
-            {mods.map((mod) => (
-              <li key={mod.address} title={mod.name}>
-                <WalletAvatar address={mod.address} size={36} className="ring-2 ring-background" />
-                <span className="sr-only">{mod.name}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="inline-flex items-center gap-1.5 text-sm font-semibold">
-            <ShieldCheckIcon className="size-4 text-primary" aria-hidden="true" />
-            {m.youAre}
-          </p>
-        </div>
+        <ul className="flex -space-x-2" aria-label={m.title}>
+          {mods.map((mod) => (
+            <li key={mod.address} title={mod.name}>
+              <WalletAvatar address={mod.address} size={36} className="ring-2 ring-background" />
+              <span className="sr-only">{mod.name}</span>
+            </li>
+          ))}
+        </ul>
       </header>
 
       <section aria-labelledby="open-cases" className="flex flex-col gap-4">
@@ -153,10 +147,8 @@ function CaseCard({ demo, c, onVoted }: { demo: DemoState; c: ModerationCase; on
         onVoted()
       }
     )
-    if (ok) {
-      toast.success(t(m.youVoted, { vote: m.voteNames[v] }))
-      void simulateOtherModerators(c.id, me)
-    }
+    // No toast: the card itself says "You voted to …" while the tally fills.
+    if (ok) void simulateOtherModerators(c.id, me)
   }
 
   const decided = c.status !== "open"

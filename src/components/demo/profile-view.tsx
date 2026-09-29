@@ -26,6 +26,8 @@ import { nameOf } from "./identity"
 import { PillToggle } from "./explore-view"
 import { ReviewCard } from "./review-card"
 
+const PAGE = 5
+
 export function ProfileView({ address, sealed }: { address: string; sealed?: string }) {
   const demo = useDemo()
   const { app, locale } = useAppCopy()
@@ -38,7 +40,6 @@ export function ProfileView({ address, sealed }: { address: string; sealed?: str
       <section className="mx-auto flex max-w-md flex-col items-center py-12 text-center">
         <SearchXIcon className="size-10 text-muted-foreground" aria-hidden="true" />
         <h1 className="mt-4 text-2xl font-extrabold">{p.invalidTitle}</h1>
-        <p className="mt-2 text-muted-foreground">{p.invalidBody}</p>
         <Button asChild className="mt-6">
           <Link href={href(locale, "/app")}>{p.backToExplore}</Link>
         </Button>
@@ -174,6 +175,8 @@ function ReceivedList({
   const p = app.profile
   const [filter, setFilter] = useState<"all" | "verified" | "replies">("all")
   const [sort, setSort] = useState<"newest" | "helpful">("newest")
+  // Five at a time: the score panel already summarises the rest.
+  const [limit, setLimit] = useState(PAGE)
 
   const list = useMemo(() => {
     const base = rep.received.filter((r) =>
@@ -202,7 +205,6 @@ function ReceivedList({
         }
       >
         <p className="font-bold text-foreground">{p.emptyTitle}</p>
-        <p className="mt-1">{p.emptyBody}</p>
         <span className="sr-only">{name}</span>
       </Empty>
     )
@@ -214,7 +216,10 @@ function ReceivedList({
         <PillToggle
           label={p.filter.label}
           value={filter}
-          onChange={setFilter}
+          onChange={(v) => {
+            setFilter(v)
+            setLimit(PAGE)
+          }}
           options={[
             { value: "all", label: p.filter.all },
             { value: "verified", label: p.filter.verified },
@@ -233,9 +238,14 @@ function ReceivedList({
       </div>
       <div id={listId} className="flex flex-col gap-3">
         {list.length === 0 ? <Empty>{p.emptyFiltered}</Empty> : null}
-        {list.map((r) => (
+        {list.slice(0, limit).map((r) => (
           <ReviewCard key={r.id} state={demo} review={r} mode="received" fresh={r.id === freshId} />
         ))}
+        {list.length > limit ? (
+          <Button variant="outline" className="self-center" onClick={() => setLimit((l) => l + PAGE)}>
+            {app.explore.moreReviews}
+          </Button>
+        ) : null}
       </div>
     </>
   )
@@ -264,14 +274,10 @@ function ScorePanel({ rep, initial }: { rep: Reputation; initial?: number }) {
         />
         {score !== null ? (
           <>
-            <p className="mt-1 text-xs text-muted-foreground">{p.outOf}</p>
             <p className="mt-3 text-sm font-semibold">{t(p.basedOn, { n: rep.visible.length, v: rep.verifiedCount })}</p>
             <p className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1 text-xs font-bold">
               {app.confidence.label} · {app.confidence[rep.confidence]}
             </p>
-            {rep.rawAverage !== null ? (
-              <p className="mt-2 text-xs text-muted-foreground">{t(p.plainAverage, { avg: formatNumber(rep.rawAverage, locale, 1) })}</p>
-            ) : null}
             {rep.hidden.length ? (
               <p className="mt-1 text-xs text-muted-foreground">{t(p.hiddenCount, { n: rep.hidden.length })}</p>
             ) : null}
@@ -349,8 +355,7 @@ function WeightsTable({ demo, rep }: { demo: DemoState; rep: Reputation }) {
         <ChevronDownIcon className="size-4 transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
       </summary>
       <div className="border-t px-4 py-3">
-        <p className="text-xs text-muted-foreground">{h.intro}</p>
-        <div className="mt-3 overflow-x-auto">
+        <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
             <thead className="text-muted-foreground">
               <tr>
@@ -386,6 +391,9 @@ function WeightsTable({ demo, rep }: { demo: DemoState; rep: Reputation }) {
         <p className="mt-3 rounded-xl bg-secondary/60 px-3 py-2 font-mono text-[0.6875rem] leading-relaxed break-words">
           {t(h.formula, { sum: fmt(sum), weights: fmt(rep.totalWeight), score: formatNumber(rep.score ?? 0, locale, 2) })}
         </p>
+        {rep.rawAverage !== null ? (
+          <p className="mt-2 text-xs text-muted-foreground">{t(app.profile.plainAverage, { avg: formatNumber(rep.rawAverage, locale, 1) })}</p>
+        ) : null}
         <Link href={href(locale, "/how-it-works")} className="mt-3 inline-block text-xs font-semibold text-primary-ink underline underline-offset-4">
           {h.more}
         </Link>

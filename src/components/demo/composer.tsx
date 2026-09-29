@@ -1,11 +1,12 @@
 "use client"
 
 import { AlertTriangleIcon, CircleDashedIcon, InfoIcon, LockIcon, XIcon } from "lucide-react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useId, useMemo, useState } from "react"
-import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
+import { InfoTip } from "@/components/ui/info-tip"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
@@ -26,7 +27,6 @@ import { formatDate, formatPercent, formatScore, formatToken, shortAddress } fro
 import { cn } from "@/lib/utils"
 
 import { useAppCopy } from "./app-provider"
-import { Disclaimer } from "./disclaimer"
 import { Identity, nameOf } from "./identity"
 import { TxFeedback } from "./tx-feedback"
 
@@ -46,7 +46,7 @@ export function Composer({ initialTo }: { initialTo?: string }) {
 }
 
 function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string }) {
-  const { app, locale, disclaimer } = useAppCopy()
+  const { app, locale } = useAppCopy()
   const c = app.composer
   const id = useId()
   const router = useRouter()
@@ -150,9 +150,9 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
         ],
         movesValue: true,
       },
+      // No toast: the profile opens on the sealed review with its block and a status line.
       (hash, block) => {
         newId = addReview({ from: me, to, rating, comment, tags, interactionId: verified ? interaction : null }, hash, block)
-        toast.success(t(c.done, { block: new Intl.NumberFormat(locale === "fr" ? "fr-CA" : "en-CA").format(block) }))
       }
     )
     if (ok && newId) router.push(href(locale, `/app/profile/${to}?sealed=${newId}`))
@@ -162,10 +162,7 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
 
   return (
     <div className="flex flex-col gap-8">
-      <header className="max-w-2xl">
-        <h1 className="text-3xl font-extrabold tracking-display sm:text-4xl">{c.title}</h1>
-        <p className="mt-2 text-muted-foreground">{c.intro}</p>
-      </header>
+      <h1 className="text-3xl font-extrabold tracking-display sm:text-4xl">{c.title}</h1>
 
       <form
         noValidate
@@ -177,7 +174,7 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
       >
         <div className="flex min-w-0 flex-col gap-8">
           {/* 1. Who */}
-          <Section n={1} title={c.who.title} hint={c.who.hint}>
+          <Section n={1} title={c.who.title}>
             {chosen ? (
               <div className="flex items-center justify-between gap-3 rounded-2xl border bg-card p-3.5">
                 <Identity state={demo} address={to} size={40} />
@@ -239,7 +236,7 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
 
           {/* 2. Interaction */}
           {chosen ? (
-            <Section n={2} title={c.interaction.title} hint={c.interaction.hint}>
+            <Section n={2} title={c.interaction.title} info={c.interaction.info} infoLabel={app.info}>
               <fieldset aria-describedby={`${id}-int-err`}>
                 <legend className="sr-only">{c.interaction.title}</legend>
                 <div className="flex flex-col gap-2">
@@ -357,7 +354,7 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
           </Section>
 
           {/* 5. Comment */}
-          <Section n={chosen ? 5 : 4} title={c.comment.title} hint={c.comment.hint}>
+          <Section n={chosen ? 5 : 4} title={c.comment.title}>
             <Label htmlFor={`${id}-comment`} className="sr-only">
               {c.comment.title}
             </Label>
@@ -386,7 +383,9 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
                 ) : (
                   <span className="text-muted-foreground">{c.tone.waiting}</span>
                 )}
-                <span className="text-xs text-muted-foreground">{c.tone.note}</span>
+                <InfoTip label={app.info} className="-ml-1">
+                  {c.tone.info}
+                </InfoTip>
               </div>
               {disagree ? (
                 <p className="tr-in flex items-start gap-2 rounded-xl border border-warning/40 bg-warning/10 px-3 py-2 text-sm">
@@ -433,27 +432,36 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
             ) : (
               <p className="mt-3 text-sm text-muted-foreground">{c.preview.empty}</p>
             )}
-          </div>
 
-          <div className="rounded-3xl border bg-card p-5">
-            <div className="flex items-baseline justify-between gap-3">
-              <p className="text-sm font-bold">{c.preview.weightTitle}</p>
-              <p className="text-sm font-extrabold">
-                {weight >= 1 ? c.preview.full : t(c.preview.partial, { pct: formatPercent(weight, locale) })}
-              </p>
+            {/* Weight in the score: the number and bar; the why sits behind the info icon. */}
+            <div className="mt-5 border-t pt-4">
+              <div className="flex items-center justify-between gap-3">
+                <div className="inline-flex items-center text-sm font-bold">
+                  {c.preview.weightTitle}
+                  <InfoTip label={c.preview.how} className="ml-0.5">
+                    <p className="font-bold">{c.preview.how}</p>
+                    <ul className="mt-1.5 flex flex-col gap-1 text-muted-foreground">
+                      <li>{verified ? c.preview.verified : c.preview.unverified}</li>
+                      <li>{standing === "established" ? c.preview.established : c.preview.newWallet}</li>
+                    </ul>
+                    <Link href={href(locale, "/how-it-works")} className="mt-2 inline-block font-semibold text-primary-ink underline underline-offset-4">
+                      {app.profile.how.more}
+                    </Link>
+                  </InfoTip>
+                </div>
+                <p className="text-sm font-extrabold">
+                  {weight >= 1 ? c.preview.full : t(c.preview.partial, { pct: formatPercent(weight, locale) })}
+                </p>
+              </div>
+              <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-border">
+                <div className="h-full rounded-full bg-primary transition-[width] duration-300 ease-out" style={{ width: `${weight * 100}%` }} />
+              </div>
+              {before !== null && after !== null ? (
+                <p className="mt-3 text-sm font-semibold tabular-nums">
+                  {t(c.preview.scoreMove, { from: formatScore(before, locale), to: formatScore(after, locale) })}
+                </p>
+              ) : null}
             </div>
-            <div className="mt-2 h-2.5 overflow-hidden rounded-full bg-border">
-              <div className="h-full rounded-full bg-primary transition-[width] duration-300 ease-out" style={{ width: `${weight * 100}%` }} />
-            </div>
-            <ul className="mt-3 flex flex-col gap-1 text-xs text-muted-foreground">
-              <li>{verified ? c.preview.verified : c.preview.unverified}</li>
-              <li>{standing === "established" ? c.preview.established : c.preview.newWallet}</li>
-            </ul>
-            {before !== null && after !== null ? (
-              <p className="mt-3 rounded-xl bg-secondary/60 px-3 py-2 text-sm font-semibold tabular-nums">
-                {t(c.preview.scoreMove, { from: formatScore(before, locale), to: formatScore(after, locale) })}
-              </p>
-            ) : null}
           </div>
 
           <div className="flex flex-col gap-3 rounded-3xl border bg-card p-5">
@@ -477,7 +485,6 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
                 {c.fix}
               </p>
             ) : null}
-            <Disclaimer text={disclaimer} />
           </div>
         </aside>
       </form>
@@ -485,17 +492,35 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
   )
 }
 
-function Section({ n, title, hint, children }: { n: number; title: string; hint?: string; children: React.ReactNode }) {
+/** One composer step: a number and a title, plus an optional short constraint (hint) or on-demand context (info). */
+function Section({
+  n,
+  title,
+  hint,
+  info,
+  infoLabel,
+  children,
+}: {
+  n: number
+  title: string
+  hint?: string
+  info?: string
+  infoLabel?: string
+  children: React.ReactNode
+}) {
   return (
     <section className="flex flex-col gap-3">
-      <div className="flex items-start gap-3">
-        <span aria-hidden="true" className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border-2 border-primary text-xs font-extrabold">
+      <div className="flex items-center gap-3">
+        <span aria-hidden="true" className="flex size-7 shrink-0 items-center justify-center rounded-full border-2 border-primary text-xs font-extrabold">
           {n}
         </span>
-        <div>
-          <h2 className="text-lg font-bold">{title}</h2>
-          {hint ? <p className="text-sm text-muted-foreground">{hint}</p> : null}
-        </div>
+        <h2 className="text-lg font-bold">{title}</h2>
+        {hint ? <span className="text-sm text-muted-foreground">{hint}</span> : null}
+        {info ? (
+          <InfoTip label={infoLabel ?? title} className="-ml-2">
+            {info}
+          </InfoTip>
+        ) : null}
       </div>
       <div className="sm:pl-10">{children}</div>
     </section>

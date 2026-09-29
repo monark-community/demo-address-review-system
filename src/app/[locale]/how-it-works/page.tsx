@@ -1,5 +1,6 @@
 import {
   ArrowRightIcon,
+  ChevronDownIcon,
   CalculatorIcon,
   EyeOffIcon,
   FlagIcon,
@@ -56,8 +57,7 @@ export default async function HowItWorks({ params }: PageProps<"/[locale]/how-it
   return (
     <>
       <section className="mx-auto w-full max-w-6xl px-4 pt-12 pb-10 sm:px-6 lg:pt-20">
-        <p className="eyebrow text-primary-ink">{h.eyebrow}</p>
-        <h1 className="mt-3 max-w-3xl text-4xl font-extrabold tracking-display sm:text-5xl">{h.title}</h1>
+        <h1 className="max-w-3xl text-4xl font-extrabold tracking-display sm:text-5xl">{h.title}</h1>
         <p className="mt-5 max-w-2xl text-lg text-muted-foreground">{h.intro}</p>
       </section>
 
@@ -75,7 +75,7 @@ export default async function HowItWorks({ params }: PageProps<"/[locale]/how-it
           {h.weights.title}
         </h2>
         <p className="mt-3 max-w-2xl text-muted-foreground">{h.weights.body}</p>
-        <div className="mt-8 grid gap-6 lg:grid-cols-2">
+        <div className="mt-8 grid gap-6 lg:grid-cols-2 lg:items-start">
           <div className="overflow-x-auto rounded-3xl border bg-card">
             <table className="w-full text-left text-sm">
               <thead className="border-b text-muted-foreground">
@@ -128,31 +128,34 @@ export default async function HowItWorks({ params }: PageProps<"/[locale]/how-it
         <p className="mt-3 max-w-[68ch] text-muted-foreground">{h.trail.body}</p>
       </section>
 
-      <SectionDivider className="my-8" />
-
       <section aria-labelledby="dev" className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
         <h2 id="dev" className="text-2xl font-bold sm:text-[2rem]">
           {h.dev.title}
         </h2>
         <p className="mt-3 max-w-[68ch] text-muted-foreground">{h.dev.body}</p>
-        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-          <pre className="overflow-x-auto rounded-3xl border bg-card p-5 text-xs leading-relaxed" tabIndex={0}>
-            <code>{CONTRACT}</code>
-          </pre>
-          <ul className="flex flex-col gap-3">
-            {h.dev.notes.map((n) => (
-              <li key={n} className="flex gap-3 rounded-2xl border bg-card p-4 text-sm">
-                <span aria-hidden="true" className="mt-1 size-2.5 shrink-0 rounded-full border-2 border-primary" />
-                {n}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <details className="group mt-6">
+          <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-full border px-4 text-sm font-bold transition-colors hover:bg-muted [&::-webkit-details-marker]:hidden">
+            {h.dev.show}
+            <ChevronDownIcon className="size-4 transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
+          </summary>
+          <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+            <pre className="overflow-x-auto rounded-3xl border bg-card p-5 text-xs leading-relaxed" tabIndex={0}>
+              <code>{CONTRACT}</code>
+            </pre>
+            <ul className="flex flex-col gap-3">
+              {h.dev.notes.map((n) => (
+                <li key={n} className="flex gap-3 rounded-2xl border bg-card p-4 text-sm">
+                  <span aria-hidden="true" className="mt-1 size-2.5 shrink-0 rounded-full border-2 border-primary" />
+                  {n}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </details>
       </section>
 
       <section className="mx-auto w-full max-w-6xl px-4 py-16 text-center sm:px-6">
         <h2 className="text-3xl font-extrabold tracking-display">{h.cta.title}</h2>
-        <p className="mx-auto mt-3 max-w-xl text-muted-foreground">{h.cta.body}</p>
         <Button asChild size="lg" className="mt-8">
           <Link href={href(locale, "/app")}>
             {h.cta.button}

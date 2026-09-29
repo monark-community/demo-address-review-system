@@ -16,14 +16,13 @@ import type { DemoState, FlagReason, Review } from "@/lib/demo/types"
 import { cn } from "@/lib/utils"
 
 import { useAppCopy } from "./app-provider"
-import { Disclaimer } from "./disclaimer"
 import { nameOf } from "./identity"
 import { TxFeedback } from "./tx-feedback"
 
 const REASONS: FlagReason[] = ["spam", "harassment", "off-topic", "conflict"]
 
 export function FlagDialog({ state, review, children }: { state: DemoState; review: Review; children: ReactNode }) {
-  const { app, disclaimer, locale } = useAppCopy()
+  const { app, locale } = useAppCopy()
   const f = app.flagForm
   const id = useId()
   const router = useRouter()
@@ -113,7 +112,6 @@ export function FlagDialog({ state, review, children }: { state: DemoState; revi
             />
           </div>
           <TxFeedback state={tx.state} pendingLabel={f.pending} onDismiss={tx.reset} />
-          <Disclaimer text={disclaimer} />
         </form>
         <DialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button variant="ghost" onClick={() => setOpen(false)} disabled={tx.busy}>
