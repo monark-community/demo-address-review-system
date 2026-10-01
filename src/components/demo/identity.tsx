@@ -5,7 +5,7 @@ import Link from "next/link"
 import { WalletAvatar } from "@/components/ui/wallet"
 import { href } from "@/i18n/config"
 import { memberOf } from "@/lib/demo/ops"
-import { sameAddress } from "@/lib/demo/network"
+import { isAddress, sameAddress } from "@/lib/demo/network"
 import type { DemoState } from "@/lib/demo/types"
 import { shortAddress } from "@/lib/format"
 import { cn } from "@/lib/utils"
@@ -42,6 +42,7 @@ export function Identity({
   const you = isYou(state, address)
   const name = member?.name ?? shortAddress(address)
   const sub = member ? member.role : app.unlabelled
+  const safeAddress = isAddress(address) ? address.trim() : null
 
   const inner = (
     <>
@@ -58,10 +59,10 @@ export function Identity({
     </>
   )
 
-  if (!link) return <span className={cn("flex min-w-0 items-center gap-2.5", className)}>{inner}</span>
+  if (!link || !safeAddress) return <span className={cn("flex min-w-0 items-center gap-2.5", className)}>{inner}</span>
   return (
     <Link
-      href={href(locale, `/app/profile/${address}`)}
+      href={href(locale, `/app/profile/${safeAddress}`)}
       className={cn("group flex min-w-0 items-center gap-2.5 rounded-lg [&_.font-bold]:group-hover:underline [&_.font-bold]:underline-offset-4", className)}
     >
       {inner}
