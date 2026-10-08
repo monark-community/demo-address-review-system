@@ -16,7 +16,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { StepsDiagram } from "@/components/diagrams/steps-diagram"
-import { SectionDivider } from "@/components/site/section-divider"
+import { SectionDivider } from "@/components/ui/section-divider"
 import { Button } from "@/components/ui/button"
 import { href, isLocale } from "@/i18n/config"
 import { getDictionary } from "@/i18n"
@@ -68,7 +68,7 @@ export default async function HowItWorks({ params }: PageProps<"/[locale]/how-it
         <StepsDiagram label={h.life.label} steps={h.life.steps} icons={[HandshakeIcon, PenLineIcon, SignatureIcon, StampIcon, CalculatorIcon]} />
       </section>
 
-      <SectionDivider className="my-8" />
+      <SectionDivider contained className="my-8" />
 
       <section aria-labelledby="weights" className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
         <h2 id="weights" className="text-2xl font-bold sm:text-[2rem]">

@@ -5,7 +5,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { HeroCard } from "@/components/home/hero-card"
-import { SectionDivider } from "@/components/site/section-divider"
+import { SectionDivider } from "@/components/ui/section-divider"
 import { UnverifiedChip, VerifiedChip } from "@/components/trust/chips"
 import { Button } from "@/components/ui/button"
 import { WalletAvatar } from "@/components/ui/wallet"
@@ -168,7 +168,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         </div>
       </section>
 
-      <SectionDivider className="mt-0" />
+      <SectionDivider contained />
 
       {/* 4. Closing */}
       <section className="mx-auto w-full max-w-6xl px-4 py-16 text-center sm:px-6 lg:py-24">
