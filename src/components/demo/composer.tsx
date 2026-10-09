@@ -10,6 +10,7 @@ import { InfoTip } from "@/components/ui/info-tip"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { TxFeedback } from "@/components/ui/tx-feedback"
 import { WalletAvatar } from "@/components/ui/wallet"
 import { SentimentChip, TagChip, UnverifiedChip, VerifiedChip } from "@/components/trust/chips"
 import { SealStamp } from "@/components/trust/seal-stamp"
@@ -26,9 +27,8 @@ import { TAG_IDS, type DemoState, type Rating, type TagId } from "@/lib/demo/typ
 import { formatDate, formatPercent, formatScore, formatToken, shortAddress } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
-import { useAppCopy } from "./app-provider"
+import { useAppCopy, useTxFeedbackLabels } from "./app-provider"
 import { Identity, nameOf } from "./identity"
-import { TxFeedback } from "./tx-feedback"
 
 const MIN = 40
 const MAX = 600
@@ -47,6 +47,7 @@ export function Composer({ initialTo }: { initialTo?: string }) {
 
 function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string }) {
   const { app, locale } = useAppCopy()
+  const txLabels = useTxFeedbackLabels()
   const c = app.composer
   const id = useId()
   const router = useRouter()
@@ -470,7 +471,10 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
               {c.permanent}
             </p>
             <TxFeedback
-              state={tx.state}
+              {...txLabels}
+              phase={tx.state.phase}
+              hash={tx.state.hash}
+              error={tx.state.error}
               pendingLabel={c.pending}
               onRetry={tx.state.phase === "failed" ? () => void seal() : undefined}
               onDismiss={tx.reset}

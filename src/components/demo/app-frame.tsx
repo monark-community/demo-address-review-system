@@ -1,21 +1,24 @@
 "use client"
 
 import { Loader2Icon, PenLineIcon, WalletIcon, XCircleIcon } from "lucide-react"
-import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import type { ReactNode } from "react"
+import { toast } from "sonner"
 
+import { AppLoading } from "@/components/ui/app-loading"
+import { AppTabs } from "@/components/ui/app-tabs"
 import { Button } from "@/components/ui/button"
+import { DemoControls } from "@/components/ui/demo-controls"
+import { MonarkMark } from "@/components/ui/site-brand"
+import { Skeleton } from "@/components/ui/skeleton"
 import { href } from "@/i18n/config"
 import { t } from "@/i18n/t"
-import { sameAddress } from "@/lib/demo/network"
-import { useDemo, useStorageOk } from "@/lib/demo/store"
+import { NETWORK_NAME, sameAddress } from "@/lib/demo/network"
+import { resetDemo, setSettings, useDemo, useStorageOk } from "@/lib/demo/store"
 import { connectWallet } from "@/lib/demo/wallet"
-import { cn } from "@/lib/utils"
 
 import { useAppCopy } from "./app-provider"
-import { DemoControls } from "./demo-controls"
 
 /**
  * App chrome under the site header: ONE compact bar with the section nav on
@@ -37,7 +40,18 @@ export function AppFrame({ children }: { children: ReactNode }) {
         </p>
       ) : null}
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 py-8 sm:px-6 lg:py-10">
-        {!demo ? <AppLoading label={app.loading} /> : demo.wallet.status !== "connected" ? <ConnectGate /> : children}
+        {!demo ? (
+          <AppLoading label={app.loading}>
+            <Skeleton className="h-9 w-56 rounded-full" />
+            <div className="grid gap-4 lg:grid-cols-[20rem_1fr]">
+              <Skeleton className="h-72 rounded-2xl" />
+              <div className="flex flex-col gap-3">
+                <Skeleton className="h-32 rounded-2xl" />
+                <Skeleton className="h-32 rounded-2xl" />
+              </div>
+            </div>
+          </AppLoading>
+        ) : demo.wallet.status !== "connected" ? <ConnectGate /> : children}
       </div>
     </div>
   )
@@ -51,80 +65,70 @@ function AppBar({ connected }: { connected: boolean }) {
   const openForYou = demo
     ? demo.cases.filter((c) => c.status === "open" && !c.votes.some((v) => sameAddress(v.moderator, me))).length
     : 0
-  const items = [
-    { href: href(locale, "/app"), label: app.nav.explore, exact: true },
-    { href: href(locale, `/app/profile/${me}`), label: app.nav.me },
-    { href: href(locale, "/app/moderation"), label: app.nav.moderation, count: openForYou },
-  ]
   const writeHref = href(locale, "/app/write")
-
-  return (
-    <div className="border-b bg-secondary/40">
-      <div className="mx-auto flex min-h-13 max-w-6xl items-center gap-2 px-4 sm:px-6">
-        {connected ? (
-          <nav aria-label={app.nav.label} className="min-w-0 flex-1">
-            <ul className="-mx-1 flex min-w-0 items-center gap-0.5 overflow-x-auto px-1 py-2 [scrollbar-width:none] sm:gap-1">
-              {items.map((item) => {
-                const active = item.exact ? pathname === item.href : pathname === item.href || pathname.startsWith(`${item.href}/`)
-                return (
-                  <li key={item.href} className="shrink-0">
-                    <Link
-                      href={item.href}
-                      aria-current={active ? "page" : undefined}
-                      className={cn(
-                        "inline-flex h-9 items-center gap-1.5 rounded-full px-2.5 text-sm font-semibold transition-colors duration-150 sm:gap-2 sm:px-3.5",
-                        active ? "bg-card text-foreground ring-1 ring-border" : "text-muted-foreground hover:text-foreground"
-                      )}
-                    >
-                      {item.label}
-                      {item.count ? (
-                        <span
-                          className="inline-flex min-w-5 items-center justify-center rounded-full bg-primary px-1.5 text-xs font-bold text-primary-foreground"
-                          aria-label={t(app.nav.openCases, { n: item.count })}
-                        >
-                          {item.count}
-                        </span>
-                      ) : null}
-                    </Link>
-                  </li>
-                )
-              })}
-            </ul>
-          </nav>
-        ) : (
-          <div className="flex-1" />
-        )}
-        <div className="flex shrink-0 items-center gap-2">
-          <DemoControls />
-          {connected && pathname !== writeHref ? (
-            // Phones: hidden, so the three sections fit in one bar; every profile has its own "Write a review".
-            <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
-              <Link href={writeHref}>
-                <PenLineIcon aria-hidden="true" />
-                <span className="hidden sm:inline">{app.nav.write}</span>
-                <span className="sr-only sm:hidden">{app.nav.write}</span>
-              </Link>
-            </Button>
-          ) : null}
-        </div>
-      </div>
-    </div>
+  const c = app.controls
+  const actions = (
+    <>
+      {demo ? (
+        <DemoControls
+          networkName={NETWORK_NAME}
+          slow={demo.settings.slow}
+          onSlowChange={(slow) => setSettings({ slow })}
+          failNext={demo.settings.failNext}
+          onFailNextChange={(failNext) => setSettings({ failNext })}
+          onReset={() => {
+            resetDemo(locale)
+            toast.success(c.resetDone)
+          }}
+          title={c.title}
+          openLabel={c.open}
+          slowLabel={c.slow}
+          slowHint={c.slowHint}
+          failNextLabel={c.failNext}
+          failNextHint={c.failNextHint}
+          resetLabel={c.reset}
+          resetHint={c.resetHint}
+          resetConfirmTitle={c.resetConfirm}
+          resetConfirmBody={c.resetConfirmBody}
+          resetConfirmLabel={c.resetDo}
+          cancelLabel={c.cancel}
+          closeLabel={app.close}
+        />
+      ) : null}
+      {connected && pathname !== writeHref ? (
+        // Phones: hidden, so the three sections fit in one bar; every profile has its own "Write a review".
+        <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
+          <Link href={writeHref}>
+            <PenLineIcon aria-hidden="true" />
+            {app.nav.write}
+          </Link>
+        </Button>
+      ) : null}
+    </>
   )
-}
 
-export function AppLoading({ label }: { label: string }) {
   return (
-    <div role="status" aria-live="polite" className="flex flex-col gap-4">
-      <span className="sr-only">{label}</span>
-      <div className="h-9 w-56 animate-pulse rounded-full bg-muted" />
-      <div className="grid gap-4 lg:grid-cols-[20rem_1fr]">
-        <div className="h-72 animate-pulse rounded-2xl bg-muted" />
-        <div className="flex flex-col gap-3">
-          <div className="h-32 animate-pulse rounded-2xl bg-muted" />
-          <div className="h-32 animate-pulse rounded-2xl bg-muted" />
-        </div>
-      </div>
-    </div>
+    <AppTabs
+      tabs={
+        connected
+          ? [
+              { href: href(locale, "/app"), label: app.nav.explore, exact: true },
+              { href: href(locale, `/app/profile/${me}`), label: app.nav.me },
+              {
+                href: href(locale, "/app/moderation"),
+                label: app.nav.moderation,
+                count: openForYou,
+                countLabel: t(app.nav.openCases, { n: openForYou }),
+              },
+            ]
+          : []
+      }
+      pathname={pathname}
+      LinkComponent={Link}
+      label={app.nav.label}
+      aria-hidden={connected ? undefined : true}
+      actions={actions}
+    />
   )
 }
 
@@ -137,7 +141,7 @@ function ConnectGate() {
 
   return (
     <section aria-labelledby="gate-title" className="mx-auto flex w-full max-w-lg flex-1 flex-col items-center justify-center py-8 text-center">
-      <Image src="/brand/monark-mark.svg" alt="" width={56} height={56} unoptimized className="size-14" />
+      <MonarkMark className="size-14" />
       <h1 id="gate-title" className="mt-6 text-3xl font-extrabold tracking-display">
         {g.title}
       </h1>

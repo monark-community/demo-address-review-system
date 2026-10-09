@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { TxFeedback } from "@/components/ui/tx-feedback"
 import { href } from "@/i18n/config"
 import { t } from "@/i18n/t"
 import { useTx } from "@/lib/demo/chain"
@@ -15,14 +16,14 @@ import { openCase } from "@/lib/demo/ops"
 import type { DemoState, FlagReason, Review } from "@/lib/demo/types"
 import { cn } from "@/lib/utils"
 
-import { useAppCopy } from "./app-provider"
+import { useAppCopy, useTxFeedbackLabels } from "./app-provider"
 import { nameOf } from "./identity"
-import { TxFeedback } from "./tx-feedback"
 
 const REASONS: FlagReason[] = ["spam", "harassment", "off-topic", "conflict"]
 
 export function FlagDialog({ state, review, children }: { state: DemoState; review: Review; children: ReactNode }) {
   const { app, locale } = useAppCopy()
+  const txLabels = useTxFeedbackLabels()
   const f = app.flagForm
   const id = useId()
   const router = useRouter()
@@ -111,7 +112,7 @@ export function FlagDialog({ state, review, children }: { state: DemoState; revi
               disabled={tx.busy}
             />
           </div>
-          <TxFeedback state={tx.state} pendingLabel={f.pending} onDismiss={tx.reset} />
+          <TxFeedback {...txLabels} phase={tx.state.phase} hash={tx.state.hash} error={tx.state.error} pendingLabel={f.pending} onDismiss={tx.reset} />
         </form>
         <DialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button variant="ghost" onClick={() => setOpen(false)} disabled={tx.busy}>
