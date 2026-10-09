@@ -188,10 +188,8 @@ function ReceivedList({
       <Empty>{p.emptyYou}</Empty>
     ) : (
       <Empty className="gap-4">
-        <EmptyTitle className="text-sm">
-          {p.emptyTitle}
-          <span className="sr-only">{name}</span>
-        </EmptyTitle>
+        <EmptyTitle className="text-sm">{p.emptyTitle}</EmptyTitle>
+        <span className="sr-only">{name}</span>
         <EmptyContent className="mt-0">
           <Button asChild>
             <Link href={writeHref}>
