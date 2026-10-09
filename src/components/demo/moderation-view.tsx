@@ -7,6 +7,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Empty } from "@/components/ui/empty"
 import { InfoTip } from "@/components/ui/info-tip"
+import { TxFeedback } from "@/components/ui/tx-feedback"
 import { WalletAvatar } from "@/components/ui/wallet"
 import { UnverifiedChip, VerifiedChip } from "@/components/trust/chips"
 import { Stars } from "@/components/trust/stars"
@@ -21,7 +22,7 @@ import type { DemoState, ModerationCase, ModVote } from "@/lib/demo/types"
 import { formatBlock, formatRelative } from "@/lib/format"
 import { cn } from "@/lib/utils"
 
-import { useAppCopy } from "./app-provider"
+import { useAppCopy, useTxFeedbackLabels } from "./app-provider"
 import { Identity, nameOf } from "./identity"
 
 export function ModerationView() {
@@ -122,6 +123,7 @@ function Tally({ c, labels }: { c: ModerationCase; labels: { hide: string; keep:
 
 function CaseCard({ demo, c, onVoted }: { demo: DemoState; c: ModerationCase; onVoted: () => void }) {
   const { app, locale } = useAppCopy()
+  const txLabels = useTxFeedbackLabels()
   const m = app.moderation
   const tx = useTx()
   const review = demo.reviews.find((r) => r.id === c.reviewId)
@@ -241,34 +243,18 @@ function CaseCard({ demo, c, onVoted }: { demo: DemoState; c: ModerationCase; on
             </div>
           )}
           {myVote && !decided ? <p className="text-xs text-muted-foreground">{t(m.youVoted, { vote: m.voteNames[myVote.vote] })}</p> : null}
-          <TxInline state={tx.state} onRetry={tx.reset} />
+          <TxFeedback
+            {...txLabels}
+            phase={tx.state.phase}
+            hash={tx.state.hash}
+            error={tx.state.error}
+            pendingLabel={m.pending}
+            hideConfirmed
+            onDismiss={tx.reset}
+          />
         </div>
       </div>
     </article>
-  )
-}
-
-function TxInline({ state, onRetry }: { state: ReturnType<typeof useTx>["state"]; onRetry: () => void }) {
-  const { app } = useAppCopy()
-  if (state.phase === "idle" || state.phase === "confirmed") return null
-  if (state.phase === "failed") {
-    return (
-      <div role="alert" className="flex flex-col gap-2 rounded-xl border border-destructive/40 bg-destructive/5 p-3 text-sm">
-        <p>
-          <span className="font-bold text-destructive">{app.tx.failed}. </span>
-          {state.error === "rejected" ? app.tx.rejected : app.tx.reverted}
-        </p>
-        <Button size="sm" variant="outline" className="self-start" onClick={onRetry}>
-          {app.tx.dismiss}
-        </Button>
-      </div>
-    )
-  }
-  return (
-    <p role="status" className="flex items-center gap-2 text-sm font-semibold">
-      <Loader2Icon className="size-4 animate-spin text-primary" aria-hidden="true" />
-      {state.phase === "signing" ? app.tx.signing : app.moderation.pending}
-    </p>
   )
 }
 
