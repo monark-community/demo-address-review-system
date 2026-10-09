@@ -7,6 +7,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem, RadioGroupItemTitle } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { TxFeedback } from "@/components/ui/tx-feedback"
 import { href } from "@/i18n/config"
@@ -14,7 +15,6 @@ import { t } from "@/i18n/t"
 import { useTx } from "@/lib/demo/chain"
 import { openCase } from "@/lib/demo/ops"
 import type { DemoState, FlagReason, Review } from "@/lib/demo/types"
-import { cn } from "@/lib/utils"
 
 import { useAppCopy, useTxFeedbackLabels } from "./app-provider"
 import { nameOf } from "./identity"
@@ -78,29 +78,24 @@ export function FlagDialog({ state, review, children }: { state: DemoState; revi
             void submit()
           }}
         >
-          <fieldset className="flex flex-col gap-2">
-            <legend className="mb-2 text-sm font-bold">{f.reason}</legend>
-            {REASONS.map((r) => (
-              <label
-                key={r}
-                className={cn(
-                  "flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border px-3.5 py-2 text-sm transition-colors has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50",
-                  reason === r ? "border-primary bg-secondary/60 font-semibold" : "hover:bg-muted"
-                )}
-              >
-                <input
-                  type="radio"
-                  name={`${id}-reason`}
-                  value={r}
-                  checked={reason === r}
-                  onChange={() => setReason(r)}
-                  className="size-4 accent-[var(--primary)]"
-                  disabled={tx.busy}
-                />
-                {app.reasons[r]}
-              </label>
-            ))}
-          </fieldset>
+          <div className="flex flex-col gap-2">
+            <p id={`${id}-reason`} className="mb-2 text-sm font-bold">
+              {f.reason}
+            </p>
+            <RadioGroup
+              variant="card"
+              value={reason}
+              onValueChange={(v) => setReason(v as FlagReason)}
+              disabled={tx.busy}
+              aria-labelledby={`${id}-reason`}
+            >
+              {REASONS.map((r) => (
+                <RadioGroupItem key={r} value={r}>
+                  <RadioGroupItemTitle>{app.reasons[r]}</RadioGroupItemTitle>
+                </RadioGroupItem>
+              ))}
+            </RadioGroup>
+          </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor={`${id}-note`}>{f.note}</Label>
             <Textarea

@@ -2,6 +2,7 @@
 
 import { EyeOffIcon, FlagIcon, GavelIcon, MessageSquareReplyIcon, PenLineIcon, StarIcon } from "lucide-react"
 
+import { Empty } from "@/components/ui/empty"
 import { t } from "@/i18n/t"
 import type { ActivityEntry, ActivityKind } from "@/lib/demo/ops"
 import type { DemoState } from "@/lib/demo/types"
@@ -26,7 +27,7 @@ export function ActivityList({ state, entries }: { state: DemoState; entries: Ac
   const a = app.activity
 
   if (entries.length === 0) {
-    return <p className="rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">{a.empty}</p>
+    return <Empty>{a.empty}</Empty>
   }
 
   return (

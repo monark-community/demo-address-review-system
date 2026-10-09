@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { Empty } from "@/components/ui/empty"
 import { InfoTip } from "@/components/ui/info-tip"
 import { WalletAvatar } from "@/components/ui/wallet"
 import { UnverifiedChip, VerifiedChip } from "@/components/trust/chips"
@@ -57,10 +58,10 @@ export function ModerationView() {
           {m.open} <span className="text-muted-foreground tabular-nums">{demo.cases.filter((c) => c.status === "open").length}</span>
         </h2>
         {open.length === 0 ? (
-          <p className="flex items-center justify-center gap-2 rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
+          <Empty className="flex-row justify-center gap-2">
             <CheckIcon className="size-4 text-success" aria-hidden="true" />
             {m.empty}
-          </p>
+          </Empty>
         ) : (
           open.map((c) => <CaseCard key={c.id} demo={demo} c={c} onVoted={() => setPinned((p) => [...p, c.id])} />)
         )}
@@ -71,7 +72,7 @@ export function ModerationView() {
           {m.resolved}
         </h2>
         {resolved.length === 0 ? (
-          <p className="rounded-2xl border border-dashed p-6 text-center text-sm text-muted-foreground">{m.emptyResolved}</p>
+          <Empty size="sm">{m.emptyResolved}</Empty>
         ) : (
           <ul className="flex flex-col divide-y rounded-2xl border bg-card">
             {resolved.map((c) => (

@@ -1,10 +1,12 @@
 "use client"
 
-import { CalculatorIcon, CheckCircle2Icon, ChevronDownIcon, PenLineIcon, SearchXIcon } from "lucide-react"
+import { CalculatorIcon, CheckCircle2Icon, PenLineIcon, SearchXIcon } from "lucide-react"
 import Link from "next/link"
 import { useId, useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { Disclosure } from "@/components/ui/disclosure"
+import { Empty, EmptyContent, EmptyTitle } from "@/components/ui/empty"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Wallet, WalletAvatar } from "@/components/ui/wallet"
 import { SentimentChip, TagChip } from "@/components/trust/chips"
@@ -145,15 +147,6 @@ function Badge({ children }: { children: React.ReactNode }) {
   return <span className="rounded-full border px-2.5 py-0.5 text-xs font-bold text-muted-foreground">{children}</span>
 }
 
-function Empty({ children, action }: { children: React.ReactNode; action?: React.ReactNode }) {
-  return (
-    <div className="flex flex-col items-center gap-4 rounded-2xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-      <div>{children}</div>
-      {action}
-    </div>
-  )
-}
-
 function ReceivedList({
   demo,
   rep,
@@ -194,18 +187,19 @@ function ReceivedList({
     return you ? (
       <Empty>{p.emptyYou}</Empty>
     ) : (
-      <Empty
-        action={
+      <Empty className="gap-4">
+        <EmptyTitle className="text-sm">
+          {p.emptyTitle}
+          <span className="sr-only">{name}</span>
+        </EmptyTitle>
+        <EmptyContent className="mt-0">
           <Button asChild>
             <Link href={writeHref}>
               <PenLineIcon aria-hidden="true" />
               {p.writeFirst}
             </Link>
           </Button>
-        }
-      >
-        <p className="font-bold text-foreground">{p.emptyTitle}</p>
-        <span className="sr-only">{name}</span>
+        </EmptyContent>
       </Empty>
     )
   }
@@ -346,58 +340,53 @@ function WeightsTable({ demo, rep }: { demo: DemoState; rep: Reputation }) {
   const fmt = (n: number, d = 2) => formatNumber(n, locale, d)
 
   return (
-    <details className="group rounded-2xl border bg-background">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 px-4 py-2.5 text-sm font-bold [&::-webkit-details-marker]:hidden">
-        <span className="inline-flex items-center gap-2">
-          <CalculatorIcon className="size-4 text-primary" aria-hidden="true" />
-          {h.title}
-        </span>
-        <ChevronDownIcon className="size-4 transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
-      </summary>
-      <div className="border-t px-4 py-3">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="text-muted-foreground">
-              <tr>
-                <th scope="col" className="py-1 pr-2 font-semibold">{h.review}</th>
-                <th scope="col" className="py-1 pr-2 text-right font-semibold">{h.stars}</th>
-                <th scope="col" className="py-1 text-right font-semibold">{h.weight}</th>
+    <Disclosure
+      summary={h.title}
+      icon={<CalculatorIcon aria-hidden="true" />}
+      className="bg-background"
+    >
+      <div className="overflow-x-auto">
+        <table className="w-full text-left text-xs">
+          <thead className="text-muted-foreground">
+            <tr>
+              <th scope="col" className="py-1 pr-2 font-semibold">{h.review}</th>
+              <th scope="col" className="py-1 pr-2 text-right font-semibold">{h.stars}</th>
+              <th scope="col" className="py-1 text-right font-semibold">{h.weight}</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y">
+            {rep.visible.map((w) => (
+              <tr key={w.review.id}>
+                <td className="py-1.5 pr-2">
+                  <span className="block max-w-[10rem] truncate font-semibold">{nameOf(demo, w.review.from)}</span>
+                  <span className="block text-muted-foreground">
+                    {w.verified ? h.verified : h.unverified}
+                    {" · "}
+                    {w.standing === "established" ? h.established : h.newWallet}
+                  </span>
+                </td>
+                <td className="py-1.5 pr-2 text-right tabular-nums">{w.review.rating}</td>
+                <td className="py-1.5 text-right font-bold tabular-nums">{fmt(w.weight)}</td>
               </tr>
-            </thead>
-            <tbody className="divide-y">
-              {rep.visible.map((w) => (
-                <tr key={w.review.id}>
-                  <td className="py-1.5 pr-2">
-                    <span className="block max-w-[10rem] truncate font-semibold">{nameOf(demo, w.review.from)}</span>
-                    <span className="block text-muted-foreground">
-                      {w.verified ? h.verified : h.unverified}
-                      {" · "}
-                      {w.standing === "established" ? h.established : h.newWallet}
-                    </span>
-                  </td>
-                  <td className="py-1.5 pr-2 text-right tabular-nums">{w.review.rating}</td>
-                  <td className="py-1.5 text-right font-bold tabular-nums">{fmt(w.weight)}</td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr className="border-t">
-                <th scope="row" colSpan={2} className="py-1.5 pr-2 font-semibold">{h.total}</th>
-                <td className="py-1.5 text-right font-bold tabular-nums">{fmt(rep.totalWeight)}</td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-        <p className="mt-3 rounded-xl bg-secondary/60 px-3 py-2 font-mono text-[0.6875rem] leading-relaxed break-words">
-          {t(h.formula, { sum: fmt(sum), weights: fmt(rep.totalWeight), score: formatNumber(rep.score ?? 0, locale, 2) })}
-        </p>
-        {rep.rawAverage !== null ? (
-          <p className="mt-2 text-xs text-muted-foreground">{t(app.profile.plainAverage, { avg: formatNumber(rep.rawAverage, locale, 1) })}</p>
-        ) : null}
-        <Link href={href(locale, "/how-it-works")} className="mt-3 inline-block text-xs font-semibold text-primary-ink underline underline-offset-4">
-          {h.more}
-        </Link>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr className="border-t">
+              <th scope="row" colSpan={2} className="py-1.5 pr-2 font-semibold">{h.total}</th>
+              <td className="py-1.5 text-right font-bold tabular-nums">{fmt(rep.totalWeight)}</td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
-    </details>
+      <p className="mt-3 rounded-xl bg-secondary/60 px-3 py-2 font-mono text-[0.6875rem] leading-relaxed break-words">
+        {t(h.formula, { sum: fmt(sum), weights: fmt(rep.totalWeight), score: formatNumber(rep.score ?? 0, locale, 2) })}
+      </p>
+      {rep.rawAverage !== null ? (
+        <p className="mt-2 text-xs text-muted-foreground">{t(app.profile.plainAverage, { avg: formatNumber(rep.rawAverage, locale, 1) })}</p>
+      ) : null}
+      <Link href={href(locale, "/how-it-works")} className="mt-3 inline-block text-xs font-semibold text-primary-ink underline underline-offset-4">
+        {h.more}
+      </Link>
+    </Disclosure>
   )
 }

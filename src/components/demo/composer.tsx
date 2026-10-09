@@ -1,14 +1,16 @@
 "use client"
 
-import { AlertTriangleIcon, CircleDashedIcon, InfoIcon, LockIcon, XIcon } from "lucide-react"
+import { AlertTriangleIcon, CircleDashedIcon, LockIcon, XIcon } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useId, useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { FieldError } from "@/components/ui/field-error"
 import { InfoTip } from "@/components/ui/info-tip"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem, RadioGroupItemDescription, RadioGroupItemTitle } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { TxFeedback } from "@/components/ui/tx-feedback"
 import { WalletAvatar } from "@/components/ui/wallet"
@@ -211,9 +213,9 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
                     aria-invalid={!!toError && (submitted || toInput.length > 2)}
                     aria-describedby={`${id}-to-err`}
                   />
-                  <p id={`${id}-to-err`} className="min-h-5 text-xs text-destructive" aria-live="polite">
+                  <FieldError id={`${id}-to-err`} reserveSpace>
                     {toError && (submitted || toInput.length > 2) ? toError : ""}
-                  </p>
+                  </FieldError>
                 </div>
                 <div>
                   <p className="mb-2 text-sm font-bold">{c.who.pick}</p>
@@ -238,24 +240,24 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
           {/* 2. Interaction */}
           {chosen ? (
             <Section n={2} title={c.interaction.title} info={c.interaction.info} infoLabel={app.info}>
-              <fieldset aria-describedby={`${id}-int-err`}>
-                <legend className="sr-only">{c.interaction.title}</legend>
-                <div className="flex flex-col gap-2">
-                  {pairs.length === 0 ? <p className="text-sm text-muted-foreground">{c.interaction.empty}</p> : null}
-                  {pairs.map(({ interaction: i, reviewed }) => (
-                    <ChoiceCard
-                      key={i.id}
-                      name={`${id}-interaction`}
-                      checked={interaction === i.id}
-                      disabled={reviewed || tx.busy}
-                      onChange={() => setInteraction(i.id)}
-                    >
+              {pairs.length === 0 ? <p className="mb-2 text-sm text-muted-foreground">{c.interaction.empty}</p> : null}
+              <RadioGroup
+                variant="card"
+                value={interaction ?? ""}
+                onValueChange={setInteraction}
+                disabled={tx.busy}
+                aria-label={c.interaction.title}
+                aria-describedby={`${id}-int-err`}
+              >
+                {pairs.map(({ interaction: i, reviewed }) => (
+                  <RadioGroupItem key={i.id} value={i.id} disabled={reviewed}>
+                    <span className="flex items-center gap-3">
                       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                        <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                          <span className="font-bold">{i.ref}</span>
-                          <span className="text-xs text-muted-foreground">{app.kinds[i.kind]}</span>
-                        </span>
-                        <span className="text-sm">{i.title}</span>
+                        <RadioGroupItemTitle className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                          {i.ref}
+                          <span className="text-xs font-normal text-muted-foreground">{app.kinds[i.kind]}</span>
+                        </RadioGroupItemTitle>
+                        <RadioGroupItemDescription className="text-sm text-foreground">{i.title}</RadioGroupItemDescription>
                         <span className="text-xs text-muted-foreground">
                           {formatToken(i.amount, i.token, locale)} · {formatDate(i.at, locale)}
                         </span>
@@ -265,25 +267,22 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
                       ) : (
                         <SealStamp size={20} className="shrink-0" />
                       )}
-                    </ChoiceCard>
-                  ))}
-                  <ChoiceCard
-                    name={`${id}-interaction`}
-                    checked={interaction === "none"}
-                    disabled={unverifiedUsed || tx.busy}
-                    onChange={() => setInteraction("none")}
-                  >
+                    </span>
+                  </RadioGroupItem>
+                ))}
+                <RadioGroupItem value="none" disabled={unverifiedUsed}>
+                  <span className="flex items-center gap-3">
                     <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                      <span className="font-bold">{c.interaction.none}</span>
-                      <span className="text-xs text-muted-foreground">{unverifiedUsed ? c.interaction.noneUsed : c.interaction.noneHint}</span>
+                      <RadioGroupItemTitle>{c.interaction.none}</RadioGroupItemTitle>
+                      <RadioGroupItemDescription>{unverifiedUsed ? c.interaction.noneUsed : c.interaction.noneHint}</RadioGroupItemDescription>
                     </span>
                     <CircleDashedIcon className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
-                  </ChoiceCard>
-                </div>
-                <p id={`${id}-int-err`} className="mt-1.5 min-h-5 text-xs text-destructive">
-                  {showErr(interactionError)}
-                </p>
-              </fieldset>
+                  </span>
+                </RadioGroupItem>
+              </RadioGroup>
+              <FieldError id={`${id}-int-err`} reserveSpace className="mt-1.5">
+                {showErr(interactionError)}
+              </FieldError>
             </Section>
           ) : null}
 
@@ -321,9 +320,9 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
                 {rating ? `${rating}/5 · ${c.rating.names[rating - 1]}` : ""}
               </span>
             </div>
-            <p id={`${id}-rating-err`} className="mt-1.5 min-h-5 text-xs text-destructive">
+            <FieldError id={`${id}-rating-err`} reserveSpace className="mt-1.5">
               {showErr(ratingError)}
-            </p>
+            </FieldError>
           </Section>
 
           {/* 4. Tags */}
@@ -484,10 +483,7 @@ function ComposerForm({ demo, initialTo }: { demo: DemoState; initialTo?: string
               {c.submit}
             </Button>
             {submitted && !valid ? (
-              <p role="alert" className="flex items-start gap-2 text-xs text-destructive">
-                <InfoIcon className="mt-px size-3.5 shrink-0" aria-hidden="true" />
-                {c.fix}
-              </p>
+              <FieldError>{c.fix}</FieldError>
             ) : null}
           </div>
         </aside>
@@ -528,32 +524,5 @@ function Section({
       </div>
       <div className="sm:pl-10">{children}</div>
     </section>
-  )
-}
-
-function ChoiceCard({
-  name,
-  checked,
-  disabled,
-  onChange,
-  children,
-}: {
-  name: string
-  checked: boolean
-  disabled?: boolean
-  onChange: () => void
-  children: React.ReactNode
-}) {
-  return (
-    <label
-      className={cn(
-        "flex cursor-pointer items-center gap-3 rounded-2xl border bg-card p-3.5 transition-colors has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50",
-        checked ? "border-primary bg-secondary/50" : "hover:bg-muted",
-        disabled && !checked && "cursor-not-allowed opacity-60 hover:bg-card"
-      )}
-    >
-      <input type="radio" name={name} checked={checked} disabled={disabled} onChange={onChange} className="size-4 shrink-0 accent-[var(--primary)]" />
-      {children}
-    </label>
   )
 }

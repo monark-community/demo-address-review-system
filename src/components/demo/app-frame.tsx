@@ -10,6 +10,7 @@ import { AppLoading } from "@/components/ui/app-loading"
 import { AppTabs } from "@/components/ui/app-tabs"
 import { Button } from "@/components/ui/button"
 import { DemoControls } from "@/components/ui/demo-controls"
+import { FieldError } from "@/components/ui/field-error"
 import { MonarkMark } from "@/components/ui/site-brand"
 import { Skeleton } from "@/components/ui/skeleton"
 import { href } from "@/i18n/config"
@@ -164,10 +165,9 @@ function ConnectGate() {
       </Button>
       <div aria-live="polite" className="mt-4 min-h-6">
         {rejected ? (
-          <p role="alert" className="flex items-start gap-2 text-left text-sm text-destructive">
-            <XCircleIcon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+          <FieldError icon={<XCircleIcon />} className="text-left">
             {g.rejected}
-          </p>
+          </FieldError>
         ) : null}
       </div>
     </section>
