@@ -1,6 +1,5 @@
 import {
   ArrowRightIcon,
-  ChevronDownIcon,
   CalculatorIcon,
   EyeOffIcon,
   FlagIcon,
@@ -16,8 +15,9 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 
 import { StepsDiagram } from "@/components/diagrams/steps-diagram"
-import { SectionDivider } from "@/components/site/section-divider"
 import { Button } from "@/components/ui/button"
+import { Disclosure } from "@/components/ui/disclosure"
+import { SectionDivider } from "@/components/ui/section-divider"
 import { href, isLocale } from "@/i18n/config"
 import { getDictionary } from "@/i18n"
 import { pageMetadata } from "@/lib/metadata"
@@ -68,7 +68,7 @@ export default async function HowItWorks({ params }: PageProps<"/[locale]/how-it
         <StepsDiagram label={h.life.label} steps={h.life.steps} icons={[HandshakeIcon, PenLineIcon, SignatureIcon, StampIcon, CalculatorIcon]} />
       </section>
 
-      <SectionDivider className="my-8" />
+      <SectionDivider contained className="my-8" />
 
       <section aria-labelledby="weights" className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
         <h2 id="weights" className="text-2xl font-bold sm:text-[2rem]">
@@ -133,12 +133,8 @@ export default async function HowItWorks({ params }: PageProps<"/[locale]/how-it
           {h.dev.title}
         </h2>
         <p className="mt-3 max-w-[68ch] text-muted-foreground">{h.dev.body}</p>
-        <details className="group mt-6">
-          <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-full border px-4 text-sm font-bold transition-colors hover:bg-muted [&::-webkit-details-marker]:hidden">
-            {h.dev.show}
-            <ChevronDownIcon className="size-4 transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
-          </summary>
-          <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+        <Disclosure variant="pill" summary={h.dev.show} className="mt-6" contentClassName="pt-6">
+          <div className="grid gap-6 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
             <pre className="overflow-x-auto rounded-3xl border bg-card p-5 text-xs leading-relaxed" tabIndex={0}>
               <code>{CONTRACT}</code>
             </pre>
@@ -151,7 +147,7 @@ export default async function HowItWorks({ params }: PageProps<"/[locale]/how-it
               ))}
             </ul>
           </div>
-        </details>
+        </Disclosure>
       </section>
 
       <section className="mx-auto w-full max-w-6xl px-4 py-16 text-center sm:px-6">

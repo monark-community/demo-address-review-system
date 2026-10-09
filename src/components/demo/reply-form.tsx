@@ -6,15 +6,15 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { TxFeedback } from "@/components/ui/tx-feedback"
 import { t } from "@/i18n/t"
 import { useTx } from "@/lib/demo/chain"
 import { addReply } from "@/lib/demo/ops"
 import type { DemoState, Review } from "@/lib/demo/types"
 import { cn } from "@/lib/utils"
 
-import { useAppCopy } from "./app-provider"
+import { useAppCopy, useTxFeedbackLabels } from "./app-provider"
 import { nameOf } from "./identity"
-import { TxFeedback } from "./tx-feedback"
 
 const MIN = 20
 const MAX = 400
@@ -22,6 +22,7 @@ const MAX = 400
 /** Public reply by the reviewed address, once per review. */
 export function ReplyForm({ state, review, onDone, className }: { state: DemoState; review: Review; onDone: () => void; className?: string }) {
   const { app } = useAppCopy()
+  const txLabels = useTxFeedbackLabels()
   const f = app.replyForm
   const id = useId()
   const [text, setText] = useState("")
@@ -57,7 +58,7 @@ export function ReplyForm({ state, review, onDone, className }: { state: DemoSta
       noValidate
     >
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor={`${id}-reply`} className="font-bold">
+        <Label htmlFor={`${id}-reply`}>
           {f.title}
         </Label>
         <Textarea
@@ -77,7 +78,7 @@ export function ReplyForm({ state, review, onDone, className }: { state: DemoSta
           <span className="shrink-0 text-muted-foreground tabular-nums">{t(f.count, { n: length })}</span>
         </div>
       </div>
-      <TxFeedback state={tx.state} pendingLabel={f.pending} onDismiss={tx.reset} />
+      <TxFeedback {...txLabels} phase={tx.state.phase} hash={tx.state.hash} error={tx.state.error} pendingLabel={f.pending} onDismiss={tx.reset} />
       <div className="flex flex-wrap justify-end gap-2">
         <Button type="button" variant="ghost" onClick={onDone} disabled={tx.busy}>
           {f.cancel}

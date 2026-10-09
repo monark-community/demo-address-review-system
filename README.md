@@ -65,11 +65,11 @@ src/
       opengraph-image.tsx  # per-locale OG image
     sitemap.ts, robots.ts, icon.svg, globals.css
   components/
-    site/                  # standard Monark header, footer, brand, locale switch, theme toggle
+    site/                  # header and footer: @monark/ui site shell wired to the i18n copy
     demo/                  # app frame, wallet prompt, review card, composer, profile, moderation…
     trust/                 # stars, score dial, seal stamp, chips
     home/, diagrams/       # hero card, step diagrams
-    ui/                    # @monark/ui registry components (restyled)
+    ui/                    # @monark/ui 2.x registry components, unmodified (re-add with --overwrite)
   i18n/                    # typed EN/FR dictionaries
   lib/                     # demo data layer, formatting, metadata helpers
 docs/

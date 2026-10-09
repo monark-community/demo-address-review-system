@@ -6,7 +6,7 @@ import "../globals.css"
 
 import { SiteFooter } from "@/components/site/footer"
 import { SiteHeader } from "@/components/site/header"
-import { ThemeProvider } from "@/components/site/theme"
+import { ThemeProvider } from "@/components/ui/theme-toggle"
 import { isLocale, locales, SITE_URL } from "@/i18n/config"
 import { getDictionary } from "@/i18n"
 
@@ -55,6 +55,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   const { locale } = await params
   if (!isLocale(locale)) notFound()
   const dict = getDictionary(locale)
+  const c = dict.common
 
   return (
     <html lang={locale} className={nunito.variable} suppressHydrationWarning>
@@ -66,7 +67,26 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
           >
             {dict.common.skip}
           </a>
-          <SiteHeader locale={locale} dict={dict} />
+          <SiteHeader
+            locale={locale}
+            copy={{
+              common: {
+                product: c.product,
+                homeLabel: c.homeLabel,
+                nav: c.nav,
+                launchDemo: c.launchDemo,
+                menu: c.menu,
+                menuTitle: c.menuTitle,
+                closeMenu: c.closeMenu,
+                theme: c.theme,
+                language: c.language,
+                demoChip: c.demoChip,
+                demoBadge: c.demoBadge,
+              },
+              wallet: dict.app.wallet,
+              signIn: dict.app.summaries,
+            }}
+          />
           <main id="main" tabIndex={-1} className="flex flex-1 flex-col outline-none">
             {children}
           </main>

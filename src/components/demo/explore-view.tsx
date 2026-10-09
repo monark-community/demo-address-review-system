@@ -5,7 +5,10 @@ import Link from "next/link"
 import { useId, useMemo, useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { Empty } from "@/components/ui/empty"
+import { FieldError } from "@/components/ui/field-error"
 import { Input } from "@/components/ui/input"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { Stars } from "@/components/trust/stars"
 import { href } from "@/i18n/config"
 import { t } from "@/i18n/t"
@@ -14,7 +17,6 @@ import { isHidden, reputationOf, roundScore } from "@/lib/demo/score"
 import { useDemo } from "@/lib/demo/store"
 import type { DemoState } from "@/lib/demo/types"
 import { formatScore, shortAddress } from "@/lib/format"
-import { cn } from "@/lib/utils"
 
 import { useAppCopy } from "./app-provider"
 import { Identity } from "./identity"
@@ -87,9 +89,7 @@ export function ExploreView() {
         </div>
         <div id={`${id}-results`} aria-live="polite" className="mt-2">
           {q && looksLikeAddress && q.length > 2 && !validAddress ? (
-            <p role="alert" className="text-sm text-destructive">
-              {e.invalid}
-            </p>
+            <FieldError>{e.invalid}</FieldError>
           ) : null}
           {validAddress ? (
             <Link
@@ -164,7 +164,7 @@ export function ExploreView() {
             />
           </div>
           {reviews.length === 0 ? (
-            <p className="rounded-2xl border border-dashed p-6 text-center text-sm text-muted-foreground">{e.feedEmpty}</p>
+            <Empty size="sm">{e.feedEmpty}</Empty>
           ) : (
             <div className="flex flex-col gap-3">
               {reviews.slice(0, limit).map((r) => (
@@ -206,6 +206,7 @@ function MemberRow({ demo: d, address, score, count }: { demo: DemoState; addres
   )
 }
 
+/** A single-choice @monark/ui pill toggle group that always keeps one option selected. */
 export function PillToggle<T extends string>({
   label,
   value,
@@ -220,21 +221,22 @@ export function PillToggle<T extends string>({
   className?: string
 }) {
   return (
-    <div role="group" aria-label={label} className={cn("inline-flex items-center rounded-full border p-0.5", className)}>
+    <ToggleGroup
+      type="single"
+      variant="pill"
+      size="sm"
+      aria-label={label}
+      value={value}
+      onValueChange={(v) => {
+        if (v) onChange(v as T)
+      }}
+      className={className}
+    >
       {options.map((o) => (
-        <button
-          key={o.value}
-          type="button"
-          aria-pressed={value === o.value}
-          onClick={() => onChange(o.value)}
-          className={cn(
-            "inline-flex h-8 items-center rounded-full px-3 text-xs font-bold transition-colors duration-150",
-            value === o.value ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"
-          )}
-        >
+        <ToggleGroupItem key={o.value} value={o.value}>
           {o.label}
-        </button>
+        </ToggleGroupItem>
       ))}
-    </div>
+    </ToggleGroup>
   )
 }

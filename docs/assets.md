@@ -16,11 +16,9 @@ From `lovable-migration/brand-refs/` and the [monark-community/website](https://
 
 | File | Source | Used for |
 |-|-|-|
-| `public/brand/monark-mark.svg`, `src/app/icon.svg` | brand-refs `logos/svg/standalone/logo-branded-standalone.svg` | Header brand, favicon, wallet prompt, connect gate, Open Graph image |
-| `public/brand/monark-horizontal-{light,dark}.svg` | website `public/vectors/brand/horizontal/` | Footer Monark band |
+| `public/brand/monark-mark.svg`, `src/app/icon.svg` | brand-refs `logos/svg/standalone/logo-branded-standalone.svg` | Favicon, Open Graph image |
 | `public/brand/monark-vertical-{light,dark}.svg` | brand-refs `logos/svg/vertical/` | 404 page |
 | `public/brand/monark-mesh.svg` | website `public/vectors/decorative/monark-mesh.svg` | Home hero only (once per site) |
-| `public/brand/socials/*.svg` | website `public/vectors/socials/` | Footer social links (recoloured to `foreground` through a CSS mask) |
 
 ## Built in code
 
@@ -29,4 +27,5 @@ From `lovable-migration/brand-refs/` and the [monark-community/website](https://
 - Live profile card in the home hero (`src/components/home/hero-card.tsx`).
 - Open Graph image: generated per locale with `next/og` (`src/app/[locale]/opengraph-image.tsx`).
 - Wallet avatars: Jazzicons via the `@monark/ui` `wallet` component.
+- Header brand, wallet prompt, connect gate, footer logo and social icons: inline SVGs from `@monark/ui` (`site-brand`'s `MonarkMark` and `MonarkLogo`, `site-footer`'s `MONARK_SOCIALS`).
 - Icons: [Lucide](https://lucide.dev). Type: Nunito Sans via `next/font/google`.
