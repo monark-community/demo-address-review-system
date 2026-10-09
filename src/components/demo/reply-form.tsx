@@ -58,7 +58,7 @@ export function ReplyForm({ state, review, onDone, className }: { state: DemoSta
       noValidate
     >
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor={`${id}-reply`} className="font-bold">
+        <Label htmlFor={`${id}-reply`}>
           {f.title}
         </Label>
         <Textarea

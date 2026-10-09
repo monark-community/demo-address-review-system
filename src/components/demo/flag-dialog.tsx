@@ -65,9 +65,9 @@ export function FlagDialog({ state, review, children }: { state: DemoState; revi
       }}
     >
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent closeLabel={app.close} className="max-w-[calc(100%-2rem)] gap-5 rounded-3xl sm:max-w-md">
-        <DialogHeader className="text-left">
-          <DialogTitle className="text-xl font-extrabold">{f.title}</DialogTitle>
+      <DialogContent closeLabel={app.close} className="gap-5">
+        <DialogHeader>
+          <DialogTitle>{f.title}</DialogTitle>
           <DialogDescription>{f.body}</DialogDescription>
         </DialogHeader>
         <form
@@ -109,7 +109,7 @@ export function FlagDialog({ state, review, children }: { state: DemoState; revi
           </div>
           <TxFeedback {...txLabels} phase={tx.state.phase} hash={tx.state.hash} error={tx.state.error} pendingLabel={f.pending} onDismiss={tx.reset} />
         </form>
-        <DialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+        <DialogFooter>
           <Button variant="ghost" onClick={() => setOpen(false)} disabled={tx.busy}>
             {app.replyForm.cancel}
           </Button>
